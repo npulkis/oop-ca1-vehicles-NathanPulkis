@@ -62,7 +62,7 @@ public class VehicleManager {
 
     public Vehicle findVehicleByRegNum(String regNum){
         for(Vehicle v : vehicleList){
-            if (v.toString().contains(regNum)){
+            if (v.getRegistration().equalsIgnoreCase(regNum)){
                 return v;
             }
         }
