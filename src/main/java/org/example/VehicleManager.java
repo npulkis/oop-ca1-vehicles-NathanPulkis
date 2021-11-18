@@ -60,12 +60,13 @@ public class VehicleManager {
 
     //TODO add more functionality as per spec.
 
-    public Vehicle findVehicleByRegNum(String regNum){
-        for(Vehicle v : vehicleList){
-            if (v.getRegistration().equalsIgnoreCase(regNum)){
+    public Vehicle findVehicleByRegNum(String regNum) {
+        for (Vehicle v : vehicleList) {
+            if (v.getRegistration().equalsIgnoreCase(regNum)) {
                 return v;
             }
         }
-   return null;}
+        return null;
+    }
 
 }

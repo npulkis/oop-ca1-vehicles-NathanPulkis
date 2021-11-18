@@ -1,5 +1,6 @@
 package org.example;
 
+
 /**
  *
  * Nathan Pulkis
@@ -36,11 +37,22 @@ public class App
         vehicleManager.displayAllVehicles();
 
 
+        //Test findVehicleByRegNum
        if (vehicleManager.findVehicleByRegNum("151D987105")==null){
            System.out.println("Vehicle Not Found");
        }else{
            System.out.println(vehicleManager.findVehicleByRegNum("151D987105"));
        }
         System.out.println("Program exiting... Goodbye");
+
+       //Test addPassenger
+
+        passengerStore.addPassenger("Test","test@test.com","123456789",0.34,1.2);
+        passengerStore.displayAllPassengers();
+        passengerStore.addPassenger("Test","test@test.com","123456789",0.34,1.2);
+        passengerStore.displayAllPassengers();
+
+
+
     }
 }

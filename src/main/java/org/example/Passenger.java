@@ -31,6 +31,8 @@ public class Passenger {
         this.location = new LocationGPS(latitude, longitude);
     }
 
+
+
     // Version of constructor called when the passenger id is known,
     // as it was read from the "passengers.txt" file.
     //
@@ -92,5 +94,13 @@ public class Passenger {
                 + "id=" + id + ", name=" + name + ", email="
                 + email + ", phone=" + phone + ", location="
                 + location + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Passenger passenger = (Passenger) o;
+        return name.equals(passenger.name) && email.equals(passenger.email);
     }
 }
