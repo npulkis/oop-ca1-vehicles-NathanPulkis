@@ -43,7 +43,7 @@ public class MenuStarter {
 
         //pMgr.saveToFile();
 
-        System.out.println("Program ending, Goodbye");
+                System.out.println("Program ending, Goodbye");
     }
 
     private void displayMainMenu() throws IOException {
@@ -145,6 +145,8 @@ public class MenuStarter {
                         double pLatitude = keyboard.nextDouble();
                         System.out.print("Enter Passenger longitude: ");
                         double pLongitude = keyboard.nextDouble();
+
+
 
                         passengerStore.addPassenger(pName,pEmail,pPhone,pLatitude,pLongitude);
                         keyboard.nextLine();

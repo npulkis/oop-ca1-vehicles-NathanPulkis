@@ -60,13 +60,33 @@ public class VehicleManager {
 
     //TODO add more functionality as per spec.
 
-    public Vehicle findVehicleByReg(String regNum) {
+    public ArrayList<Vehicle> findVehicleByReg(String regNum) {
+        ArrayList<Vehicle> regList = new ArrayList<>();
         for (Vehicle v : vehicleList) {
             if (v.getRegistration().equalsIgnoreCase(regNum)) {
-                return v;
+                regList.add(v);
             }
         }
-        return null;
+        return regList;
+    }
+
+    public ArrayList<Vehicle> findAllVehicles(){
+
+        vehicleList.sort(new VehicleRegistrationComparator());
+
+        return vehicleList;
+    }
+
+    public ArrayList<Vehicle> findVechicleByType(String type){
+        ArrayList<Vehicle> typeList = new ArrayList<>();
+
+        for (Vehicle v: vehicleList){
+            if (v.getType().equalsIgnoreCase(type)){
+                typeList.add(v);
+            }
+        }
+        typeList.sort(new VehicleRegistrationComparator());
+        return typeList;
     }
 
 }
