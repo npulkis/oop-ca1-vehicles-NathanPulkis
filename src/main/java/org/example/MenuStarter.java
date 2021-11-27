@@ -53,7 +53,7 @@ public class MenuStarter {
                 + "2. Vehicles\n"
                 + "3. Bookings\n"
                 + "4. Exit\n"
-                + "Enter Option [1,4]";
+                + "Enter Option [1,2,4]";
 
         final int PASSENGERS = 1;
         final int VEHICLES = 2;
@@ -74,6 +74,7 @@ public class MenuStarter {
                         break;
                     case VEHICLES:
                         System.out.println("Vehicles option chosen");
+                        displayVehicleMenu();
                         break;
                     case BOOKINGS:
                         System.out.println("Bookings option chosen");
@@ -164,6 +165,101 @@ public class MenuStarter {
                 System.out.print("Invalid option - please enter number in range");
             }
         } while (option != EXIT);
+
+    }
+
+
+    private void displayVehicleMenu() {
+        final String MENU_ITEMS = "\n*** VEHICLE MENU ***\n"
+                + "1. Show all Vehicle\n"
+                + "2. Find Vehicle by Registration\n"
+                + "3. Find Vehicle by Type\n"
+                + "4. Exit\n"
+                + "Enter Option [1,2,3,4]";
+
+        final int SHOW_ALL = 1;
+        final int FIND_BY_REG = 2;
+        final int FIND_BY_TYPE =3;
+        final int EXIT = 4;
+
+        Scanner keyboard = new Scanner(System.in);
+        int option = 0;
+        do {
+            System.out.println("\n" + MENU_ITEMS);
+            try {
+                String usersInput = keyboard.nextLine();
+                option = Integer.parseInt(usersInput);
+
+                switch (option) {
+                    case SHOW_ALL:
+                        System.out.println("\nDisplay ALL Vehicles");
+                        ArrayList<Vehicle> vehicles = vehicleManager.findAllVehicles();
+                        for (Vehicle v: vehicles){
+                            System.out.println(v.toString());
+                        }
+                        break;
+                    case FIND_BY_REG:
+                        System.out.println("\nFind Vehicle by Registration");
+                        System.out.print("Enter vehicle registration: ");
+                        String reg = keyboard.nextLine();
+                        Vehicle v = vehicleManager.findVehicleByReg(reg);
+                        if (v == null)
+                            System.out.println("No vehicle matching the registration \"" + reg + "\"");
+                        else
+                            System.out.println("Found vehicle: \n" + v.toString());
+                        break;
+
+                    case FIND_BY_TYPE:
+
+                        System.out.println("\nFind Vehicle by Type");
+
+                        System.out.println("1. Van");
+                        System.out.println("2. Truck");
+                        System.out.print("\nEnter Type: ");
+                        typeSelection();
+                        break;
+
+                    case EXIT:
+                        System.out.println("Exit Menu option chosen");
+                        break;
+                    default:
+                        System.out.print("Invalid option - please enter number in range");
+                        break;
+                }
+
+            } catch (InputMismatchException | NumberFormatException e) {
+                System.out.print("Invalid option - please enter number in range");
+            }
+        } while (option != EXIT);
+
+    }
+
+    public void typeSelection(){
+
+        Scanner keyboard = new Scanner(System.in);
+        String usersInput = keyboard.nextLine();
+        int option = Integer.parseInt(usersInput);
+        final int VAN =1;
+        final int TRUCK =2;
+
+        switch(option){
+            case VAN:
+                ArrayList<Vehicle> typeList= vehicleManager.findVechicleByType("Van");
+                for (Vehicle b: typeList ){
+                    System.out.println(b.toString());
+                }
+                break;
+            case TRUCK:
+                ArrayList<Vehicle> typeList2= vehicleManager.findVechicleByType("Truck");
+                for (Vehicle b: typeList2 ){
+                    System.out.println(b.toString());
+                }
+                break;
+            default:
+                System.out.print("Invalid option - please enter number in range");
+                break;
+        }
+
 
     }
 }

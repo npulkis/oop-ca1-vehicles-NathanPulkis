@@ -60,14 +60,14 @@ public class VehicleManager {
 
     //TODO add more functionality as per spec.
 
-    public ArrayList<Vehicle> findVehicleByReg(String regNum) {
-        ArrayList<Vehicle> regList = new ArrayList<>();
+    public Vehicle findVehicleByReg(String regNum) {
+
         for (Vehicle v : vehicleList) {
             if (v.getRegistration().equalsIgnoreCase(regNum)) {
-                regList.add(v);
+               return v;
             }
         }
-        return regList;
+        return null;
     }
 
     public ArrayList<Vehicle> findAllVehicles(){
