@@ -72,4 +72,15 @@ public class PassengerStore {
             passengerList.add(passenger);
         }
     }
+
+    public  Passenger findPassengerByName(String name) {
+
+        for(Passenger p : passengerList){
+
+            if( p.getName().toLowerCase().contains(name.toLowerCase())){
+                return p;
+            }
+        }
+
+  return null;  }
 } // end class

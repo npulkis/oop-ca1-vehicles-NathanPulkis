@@ -52,7 +52,5 @@ public class App
         passengerStore.addPassenger("Test","test@test.com","123456789",0.34,1.2);
         passengerStore.displayAllPassengers();
 
-
-
     }
 }
