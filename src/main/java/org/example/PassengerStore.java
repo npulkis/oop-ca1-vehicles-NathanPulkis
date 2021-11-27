@@ -70,6 +70,7 @@ public class PassengerStore {
         }
         if (!found) {
             passengerList.add(passenger);
+            System.out.println("\nPassenger Added");
         }
     }
 

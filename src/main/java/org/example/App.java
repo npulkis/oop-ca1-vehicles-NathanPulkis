@@ -38,12 +38,12 @@ public class App
 
 
         //Test findVehicleByRegNum
-       if (vehicleManager.findVehicleByRegNum("151D987105")==null){
-           System.out.println("Vehicle Not Found");
-       }else{
-           System.out.println(vehicleManager.findVehicleByRegNum("151D987105"));
-       }
-        System.out.println("Program exiting... Goodbye");
+//       if (vehicleManager.findVehicleByRegNum("151D987105")==null){
+//           System.out.println("Vehicle Not Found");
+//       }else{
+//           System.out.println(vehicleManager.findVehicleByRegNum("151D987105"));
+//       }
+//        System.out.println("Program exiting... Goodbye");
 
        //Test addPassenger
 
