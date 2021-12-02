@@ -2,6 +2,8 @@ package org.example;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MenuStarter {
     // Components (objects) used in this App
@@ -43,7 +45,7 @@ public class MenuStarter {
 
         //pMgr.saveToFile();
 
-                System.out.println("Program ending, Goodbye");
+        System.out.println("Program ending, Goodbye");
     }
 
     private void displayMainMenu() throws IOException {
@@ -78,6 +80,7 @@ public class MenuStarter {
                         break;
                     case BOOKINGS:
                         System.out.println("Bookings option chosen");
+                        displayBookingMenu();
                         break;
                     case EXIT:
                         System.out.println("Exit Menu option chosen");
@@ -108,8 +111,9 @@ public class MenuStarter {
 
         final int SHOW_ALL = 1;
         final int FIND_BY_NAME = 2;
-        final int ADD_PASSENGER =3;
+        final int ADD_PASSENGER = 3;
         final int EXIT = 4;
+
 
         Scanner keyboard = new Scanner(System.in);
         int option = 0;
@@ -127,7 +131,7 @@ public class MenuStarter {
                         System.out.println("Find Passenger by Name");
                         System.out.println("Enter passenger name: ");
                         String name = keyboard.nextLine();
-                       Passenger p = passengerStore.findPassengerByName(name);
+                        Passenger p = passengerStore.findPassengerByName(name);
                         if (p == null)
                             System.out.println("No passenger matching the name \"" + name + "\"");
                         else
@@ -136,22 +140,11 @@ public class MenuStarter {
 
                     case ADD_PASSENGER:
 
-                        System.out.print("Enter Passenger name: ");
-                        String pName = keyboard.nextLine();
-                        System.out.print("Enter Passenger email: ");
-                        String pEmail = keyboard.nextLine();
-                        System.out.print("Enter Passenger phone number: ");
-                        String pPhone = keyboard.nextLine();
-                        System.out.print("Enter Passenger latitude: ");
-                        double pLatitude = keyboard.nextDouble();
-                        System.out.print("Enter Passenger longitude: ");
-                        double pLongitude = keyboard.nextDouble();
 
-
-
-                        passengerStore.addPassenger(pName,pEmail,pPhone,pLatitude,pLongitude);
-                        keyboard.nextLine();
-                        break;
+                        boolean result=false;
+                        do {
+                           result=addPassenger();
+                        }while (!result);
 
                     case EXIT:
                         System.out.println("Exit Menu option chosen");
@@ -179,7 +172,7 @@ public class MenuStarter {
 
         final int SHOW_ALL = 1;
         final int FIND_BY_REG = 2;
-        final int FIND_BY_TYPE =3;
+        final int FIND_BY_TYPE = 3;
         final int EXIT = 4;
 
         Scanner keyboard = new Scanner(System.in);
@@ -194,7 +187,7 @@ public class MenuStarter {
                     case SHOW_ALL:
                         System.out.println("\nDisplay ALL Vehicles");
                         ArrayList<Vehicle> vehicles = vehicleManager.findAllVehicles();
-                        for (Vehicle v: vehicles){
+                        for (Vehicle v : vehicles) {
                             System.out.println(v.toString());
                         }
                         break;
@@ -234,24 +227,68 @@ public class MenuStarter {
 
     }
 
-    public void typeSelection(){
+
+
+    private void displayBookingMenu() {
+        final String MENU_ITEMS = "\n*** BOOKING MENU ***\n"
+                + "1.Show all bookings"
+                + "2.Make a booking\n"
+                + "3.Exit"
+                + "Enter Option [1,2,3]";
+
+        final int SHOW_ALL = 1;
+        final int MAKE_BOOKING = 2;
+        final int EXIT = 3;
+
+        Scanner keyboard = new Scanner(System.in);
+        int option = 0;
+        do {
+            System.out.println("\n" + MENU_ITEMS);
+            try {
+                String usersInput = keyboard.nextLine();
+                option = Integer.parseInt(usersInput);
+
+                switch (option) {
+                    case SHOW_ALL:
+                       break;
+                    case MAKE_BOOKING:
+
+                        break;
+
+
+                    case EXIT:
+                        System.out.println("Exit Menu option chosen");
+                        break;
+                    default:
+                        System.out.print("Invalid option - please enter number in range");
+                        break;
+                }
+
+            } catch (InputMismatchException | NumberFormatException e) {
+                System.out.print("Invalid option - please enter number in range");
+            }
+        } while (option != EXIT);
+
+    }
+
+    public void typeSelection() {
 
         Scanner keyboard = new Scanner(System.in);
         String usersInput = keyboard.nextLine();
         int option = Integer.parseInt(usersInput);
-        final int VAN =1;
-        final int TRUCK =2;
+        final int VAN = 1;
+        final int TRUCK = 2;
 
-        switch(option){
+        switch (option) {
             case VAN:
-                ArrayList<Vehicle> typeList= vehicleManager.findVechicleByType("Van");
-                for (Vehicle b: typeList ){
+                ArrayList<Vehicle> typeList = vehicleManager.findVechicleByType("Van");
+                for (Vehicle b : typeList) {
                     System.out.println(b.toString());
                 }
                 break;
             case TRUCK:
-                ArrayList<Vehicle> typeList2= vehicleManager.findVechicleByType("Truck");
-                for (Vehicle b: typeList2 ){
+                ArrayList<Vehicle> typeList2 = vehicleManager.findVechicleByType("Truck");
+                for (Vehicle b : typeList2) {
                     System.out.println(b.toString());
                 }
                 break;
@@ -262,4 +299,56 @@ public class MenuStarter {
 
 
     }
+
+    public boolean addPassenger() {
+
+        try {
+
+
+            Scanner keyboard = new Scanner(System.in);
+
+
+            System.out.print("Enter Passenger name: ");
+            String pName = keyboard.nextLine();
+            System.out.print("Enter Passenger email: ");
+            String pEmail = keyboard.nextLine();
+
+            String regex = "^[A-Za-z0-9+_.-]+@(.+)$";
+            Pattern pattern = Pattern.compile(regex);
+
+            Matcher matcher = pattern.matcher(pEmail);
+            if (!matcher.matches()) {
+                System.out.println("\nWrong email input: Email must only contain A-Z a-z 0-9 .,-,_ and @ ");
+
+             return false;
+            }
+
+            System.out.print("Enter Passenger phone number: ");
+            String pPhone = keyboard.nextLine();
+
+            regex = "^[0-9]+(-[0-9]+)+$";
+            pattern = Pattern.compile(regex);
+
+            matcher = pattern.matcher(pPhone);
+            if (!matcher.matches()) {
+                System.out.println("\nWrong phone input: Phone must only contain  0-9 and - \n" +
+                        "please try again");
+
+               return false;
+            }
+
+
+            System.out.print("Enter Passenger latitude: ");
+            double pLatitude = keyboard.nextDouble();
+            System.out.print("Enter Passenger longitude: ");
+            double pLongitude = keyboard.nextDouble();
+
+
+            passengerStore.addPassenger(pName, pEmail, pPhone, pLatitude, pLongitude);
+            keyboard.nextLine();
+        } catch (InputMismatchException | NumberFormatException err) {
+            System.out.println("Wrong input please try again   " + err.toString());
+            return false;
+        }
+    return true;}
 }
