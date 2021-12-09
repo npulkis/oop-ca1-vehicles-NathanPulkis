@@ -1,6 +1,8 @@
 package org.example;
 
+
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,13 @@ public class PassengerStore {
     public void displayAllPassengers() {
         for (Passenger p : this.passengerList) {
             System.out.println(p.toString());
+        }
+    }
+
+    public void displayAllPassengerIds(){
+        System.out.println("\nPassenger Ids");
+        for (Passenger p: this.passengerList){
+            System.out.print(p.getId()+",");
         }
     }
 
@@ -84,4 +93,54 @@ public class PassengerStore {
         }
 
   return null;  }
+
+public Passenger findPassengerById(int id){
+        for (Passenger p : passengerList){
+            if (p.getId()==id){
+                return p;
+            }
+        }
+return null;}
+
+    public void removePassenger(Passenger p){
+
+        System.out.println("Passnger "+p.getId()+" removed");
+        passengerList.remove(p);
+    }
+
+    public void save() {
+        File file = new File("passengers.OUT");
+        FileWriter fWriter = null;
+        try {
+            fWriter = new FileWriter(file);
+
+            System.out.println("saving");
+            for (Passenger p : this.passengerList) {
+                int id = p.getId();
+                String name = p.getName();
+                String email = p.getEmail();
+                String phone = p.getPhone();
+                double latitude = p.getLocation().getLatitude();  // Depot GPS location
+                double longitude = p.getLocation().getLongitude();
+
+                String info = id+","+name+","+email+","+phone+","+latitude+","+longitude;
+//                if (v instanceof Van)
+//                    info += ((Van) v).getLoadSpace();
+//                else
+//                    info += ((Car) v).getSeats();
+                fWriter.write(info+"\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            //close resources
+            try {
+                fWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 } // end class

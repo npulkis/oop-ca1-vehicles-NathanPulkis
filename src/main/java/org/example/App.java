@@ -1,6 +1,10 @@
 package org.example;
 
 
+import java.awt.print.Book;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  *
  * Nathan Pulkis
@@ -29,12 +33,12 @@ public class App
 
         // create PassengerStore and load it with passenger records from text file
         PassengerStore passengerStore = new PassengerStore("passengers.txt");
-        System.out.println("List of all passengers:");
-        passengerStore.displayAllPassengers();
+//        System.out.println("List of all passengers:");
+//        passengerStore.displayAllPassengers();
 
         VehicleManager vehicleManager = new VehicleManager("vehicles.txt");
-        System.out.println("List of all Vehicles:");
-        vehicleManager.displayAllVehicles();
+//        System.out.println("List of all Vehicles:");
+//        vehicleManager.displayAllVehicles();
 
 
         //Test findVehicleByRegNum
@@ -47,10 +51,38 @@ public class App
 
        //Test addPassenger
 
-        passengerStore.addPassenger("Test","test@test.com","123456789",0.34,1.2);
-        passengerStore.displayAllPassengers();
-        passengerStore.addPassenger("Test","test@test.com","123456789",0.34,1.2);
-        passengerStore.displayAllPassengers();
+//        passengerStore.addPassenger("Test","test@test.com","123456789",0.34,1.2);
+//        passengerStore.displayAllPassengers();
+//        passengerStore.addPassenger("Test","test@test.com","123456789",0.34,1.2);
+//        passengerStore.displayAllPassengers();
+
+        Vehicle test = vehicleManager.findVechicleById(105);
+        LocationGPS start = test.getDepotGPSLocation();
+
+        Passenger test2= passengerStore.findPassengerById(101);
+        LocationGPS end = test2.getLocation();
+
+
+        DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+
+        BookingManager bookingManager = new BookingManager();
+
+        LocalDateTime now = LocalDateTime.now();
+        String dateString= now.format(dTF);
+        LocalDateTime now1 = LocalDateTime.parse(dateString,dTF);
+
+
+
+
+
+
+
+
+        bookingManager.addBooking(101,105,start,end);
+        bookingManager.displayAllBooking();
+
+
 
     }
 }

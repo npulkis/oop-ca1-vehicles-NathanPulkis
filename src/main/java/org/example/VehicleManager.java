@@ -1,11 +1,13 @@
 package org.example;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class VehicleManager {
+    private static final String FILE_NAME = "vehicles.out";
     private final ArrayList<Vehicle> vehicleList;  // for Car and Van objects
 
     public VehicleManager(String fileName) {
@@ -16,6 +18,12 @@ public class VehicleManager {
     public void displayAllVehicles() {
         for (Vehicle v : vehicleList)
             System.out.println(v.toString());
+    }
+
+    public void displayAllVechicleIds(){
+        System.out.println("Vehicle ids");
+        for (Vehicle v : vehicleList)
+            System.out.print(v.getId()+",");
     }
 
     public void loadVehiclesFromFile(String fileName) {
@@ -39,16 +47,30 @@ public class VehicleManager {
                 int mileage = sc.nextInt();
                 double latitude = sc.nextDouble();  // Depot GPS location
                 double longitude = sc.nextDouble();
-                int loadSpace = sc.nextInt();
+
+
 
                 if (type.equalsIgnoreCase("Van") ||
                         type.equalsIgnoreCase("Truck")) {
+
+                    double loadSpace = sc.nextDouble();
                     // construct a Van object and add it to the passenger list
                     vehicleList.add(new Van(id, type, make, model, milesPerKwH,
                             registration, costPerMile,
                             year, month, day,
                             mileage, latitude, longitude,
                             loadSpace));
+
+                }
+                if(type.equalsIgnoreCase("Car") ||
+                    type.equalsIgnoreCase("4x4")){
+
+                    int noOfSeats = sc.nextInt();
+                    vehicleList.add(new Car(id, type, make, model, milesPerKwH,
+                            registration, costPerMile,
+                            year, month, day,
+                            mileage, latitude, longitude,
+                            noOfSeats));
                 }
             }
             sc.close();
@@ -70,6 +92,14 @@ public class VehicleManager {
         return null;
     }
 
+    public Vehicle findVechicleById(int id){
+        for (Vehicle v: vehicleList){
+            if (v.getId()== id){
+                return v;
+            }
+        }
+    return null;}
+
     public ArrayList<Vehicle> findAllVehicles(){
 
         vehicleList.sort(new VehicleRegistrationComparator());
@@ -87,6 +117,47 @@ public class VehicleManager {
         }
         typeList.sort(new VehicleRegistrationComparator());
         return typeList;
+    }
+
+    public void save() {
+        File file = new File("vehicles.OUT");
+        FileWriter fWriter = null;
+        try {
+            fWriter = new FileWriter(file);
+
+            System.out.println("saving");
+            for (Vehicle v : this.vehicleList) {
+                int id = v.getId();
+                String type = v.getType();  // vehicle type
+                String make = v.getMake();
+                String model = v.getModel();
+                double milesPerKwH = v.getMilesPerKm();
+                String registration = v.getRegistration();
+                double costPerMile = v.getCostPerMile();
+                int year = v.getLastServicedDate().getYear();   // last service date
+                int month = v.getLastServicedDate().getMonthValue();
+                int day = v.getLastServicedDate().getDayOfMonth();
+                int mileage = v.getMileage();
+                double latitude = v.getDepotGPSLocation().getLatitude();  // Depot GPS location
+                double longitude = v.getDepotGPSLocation().getLongitude();
+
+                String info = id+","+type+","+make+","+model+","+milesPerKwH+","+registration+","+costPerMile+","+year+","+month+","+day+","+mileage+","+latitude+","+longitude+",";
+                if (v instanceof Van)
+                    info += ((Van) v).getLoadSpace();
+                else
+                    info += ((Car) v).getSeats();
+                fWriter.write(info+"\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            //close resources
+            try {
+                fWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

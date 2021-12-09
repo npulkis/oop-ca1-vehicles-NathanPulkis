@@ -1,6 +1,8 @@
 package org.example;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,16 +20,21 @@ public class MenuStarter {
 
     public void start() {
         // create PassengerStore and load all passenger records from text file
-        passengerStore = new PassengerStore("passengers.txt");
+        passengerStore = new PassengerStore("passengers.OUT");
 
         // create VehicleManager, and load all vehicles from text file
-        vehicleManager = new VehicleManager("vehicles.txt");
+        vehicleManager = new VehicleManager("vehicles.OUT");
+
+
+
 
         try {
             displayMainMenu();        // User Interface - Menu
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
 
 
         //   vehicleManager.displayAllVehicles();
@@ -84,6 +91,7 @@ public class MenuStarter {
                         break;
                     case EXIT:
                         System.out.println("Exit Menu option chosen");
+                        close();
                         break;
                     default:
                         System.out.print("Invalid option - please enter number in range");
@@ -106,13 +114,15 @@ public class MenuStarter {
                 + "1. Show all Passengers\n"
                 + "2. Find Passenger by Name\n"
                 + "3. Add Passenger\n"
-                + "4. Exit\n"
-                + "Enter Option [1,2,3,4]";
+                + "4. Delete Passenger\n"
+                + "5. Exit\n"
+                + "Enter Option [1,2,3,4.5]";
 
         final int SHOW_ALL = 1;
         final int FIND_BY_NAME = 2;
         final int ADD_PASSENGER = 3;
-        final int EXIT = 4;
+        final int DELETE_PASSENGER =4;
+        final int EXIT = 5;
 
 
         Scanner keyboard = new Scanner(System.in);
@@ -126,6 +136,7 @@ public class MenuStarter {
                     case SHOW_ALL:
                         System.out.println("Display ALL Passengers");
                         passengerStore.displayAllPassengers();
+                        promptEnterKey();
                         break;
                     case FIND_BY_NAME:
                         System.out.println("Find Passenger by Name");
@@ -136,21 +147,46 @@ public class MenuStarter {
                             System.out.println("No passenger matching the name \"" + name + "\"");
                         else
                             System.out.println("Found passenger: \n" + p.toString());
+
+                        promptEnterKey();
                         break;
 
                     case ADD_PASSENGER:
 
 
-                        boolean result=false;
+                        boolean result;
                         do {
                            result=addPassenger();
                         }while (!result);
+
+                        promptEnterKey();
+                        break;
+
+                    case DELETE_PASSENGER:
+                        System.out.println("Delete Passenger chosen");
+
+                        System.out.println("Enter Passenger id:");
+                       int id = keyboard.nextInt();
+                       keyboard.nextLine();
+
+                       Passenger pass = passengerStore.findPassengerById(id);
+                       if (pass ==null){
+                           System.out.println("Passenger not found");
+                           promptEnterKey();
+                           break;
+                       }
+                       passengerStore.removePassenger(pass);
+
+                       promptEnterKey();
+                        break;
+
 
                     case EXIT:
                         System.out.println("Exit Menu option chosen");
                         break;
                     default:
                         System.out.print("Invalid option - please enter number in range");
+                        promptEnterKey();
                         break;
                 }
 
@@ -190,6 +226,7 @@ public class MenuStarter {
                         for (Vehicle v : vehicles) {
                             System.out.println(v.toString());
                         }
+                        promptEnterKey();
                         break;
                     case FIND_BY_REG:
                         System.out.println("\nFind Vehicle by Registration");
@@ -200,6 +237,7 @@ public class MenuStarter {
                             System.out.println("No vehicle matching the registration \"" + reg + "\"");
                         else
                             System.out.println("Found vehicle: \n" + v.toString());
+                        promptEnterKey();
                         break;
 
                     case FIND_BY_TYPE:
@@ -231,9 +269,9 @@ public class MenuStarter {
 
     private void displayBookingMenu() {
         final String MENU_ITEMS = "\n*** BOOKING MENU ***\n"
-                + "1.Show all bookings"
+                + "1.Show all bookings\n"
                 + "2.Make a booking\n"
-                + "3.Exit"
+                + "3.Exit\n"
                 + "Enter Option [1,2,3]";
 
         final int SHOW_ALL = 1;
@@ -253,8 +291,13 @@ public class MenuStarter {
                        break;
                     case MAKE_BOOKING:
 
-                        break;
+                        boolean result;
+                        do {
+                            result = makeBooking();
+                        } while (!result);
 
+                        promptEnterKey();
+                        break;
 
                     case EXIT:
                         System.out.println("Exit Menu option chosen");
@@ -351,4 +394,77 @@ public class MenuStarter {
             return false;
         }
     return true;}
+
+    public boolean makeBooking(){
+
+        try {
+            Scanner keyboard = new Scanner(System.in);
+
+
+            vehicleManager.displayAllVechicleIds();
+            passengerStore.displayAllPassengerIds();
+
+
+            System.out.println("Input Passenger ID:");
+
+            int pID = keyboard.nextInt();
+
+            if (passengerStore.findPassengerById(pID) == null) {
+                System.out.println("Can't find passenger with given ID");
+                return false;
+            }
+
+            System.out.println("Input Vehicle ID:");
+            int vID = keyboard.nextInt();
+
+            if (vehicleManager.findVechicleById(vID) == null) {
+                System.out.println("Can't find vehicle with given ID");
+                return false;
+            }
+
+
+//            DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//            LocalDateTime now = LocalDateTime.now();
+//            String dateString = now.format(dTF);
+//            LocalDateTime dateTime = LocalDateTime.parse(dateString, dTF);
+
+//        LocationGPS start = passengerStore.findPassengerById(pID).getLocation();
+//        LocationGPS end = vehicleManager.findVehicleById(vID).getDepotGPSLocation();
+
+
+            System.out.println("Enter Start latitude");
+            double startLatitude = keyboard.nextDouble();
+            System.out.println("enter start longitude");
+            double startLongitude = keyboard.nextDouble();
+
+            LocationGPS startLocation = new LocationGPS(startLatitude, startLongitude);
+
+            System.out.println("Enter end latitude");
+            double endLatitude = keyboard.nextDouble();
+            System.out.println("Enter end longitude");
+            double endLongitude = keyboard.nextDouble();
+            keyboard.nextLine();
+
+            LocationGPS endLocation = new LocationGPS(endLatitude, endLongitude);
+
+
+            bookingManager.addBooking(pID, vID, startLocation, endLocation);
+
+        }catch (InputMismatchException | NumberFormatException err) {
+            System.out.println("Wrong input please try again   " + err.toString());
+            return false;
+        }
+    return true;}
+
+    public void promptEnterKey(){
+        System.out.println("\nPress \"ENTER\" to continue...");
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
+    }
+
+    public void close(){
+        vehicleManager.save();
+        passengerStore.save();
+        System.out.println("Exiting Program.....");
+    }
 }
