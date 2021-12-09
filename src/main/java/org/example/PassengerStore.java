@@ -23,7 +23,7 @@ public class PassengerStore {
 
     public void displayAllPassengers() {
         for (Passenger p : this.passengerList) {
-            System.out.println(p.toString());
+            System.out.println(p);
         }
     }
 
@@ -135,6 +135,7 @@ return null;}
         }finally{
             //close resources
             try {
+                assert fWriter != null;
                 fWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();

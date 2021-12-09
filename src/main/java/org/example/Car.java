@@ -4,7 +4,7 @@ package org.example;
 //
 public class Car extends Vehicle
 {
-    private double seats;   // measured in litres.  For Cars and Trucks
+    private int seats;   // measured in litres.  For Cars and Trucks
 
     public Car(String type, String make, String model, double milesPerKwH,
                String registration, double costPerMile,
@@ -39,10 +39,10 @@ public class Car extends Vehicle
         this.seats=seats;
     }
 
-    public double getSeats() {
+    public int getSeats() {
         return seats;
     }
-    public void setSeats(double seats) {
+    public void setSeats(int seats) {
         this.seats = seats;
     }
 

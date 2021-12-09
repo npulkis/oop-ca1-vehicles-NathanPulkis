@@ -4,6 +4,7 @@ package org.example;
 import java.awt.print.Book;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 /**
  *
@@ -30,6 +31,9 @@ public class App
     public static void main(String[] args)
     {
         System.out.println("\nWelcome to the VEHICLE BOOKINGS MANAGEMENT SYSTEM - CA1 for OOP\n");
+
+
+
 
         // create PassengerStore and load it with passenger records from text file
         PassengerStore passengerStore = new PassengerStore("passengers.txt");
@@ -74,12 +78,57 @@ public class App
 
 
 
+        Scanner keyboard = new Scanner(System.in);
+
+
+        vehicleManager.displayAllVechicleIds();
+        passengerStore.displayAllPassengerIds();
+
+
+        System.out.println("Input Passenger ID:");
+
+        int pID = keyboard.nextInt();
+
+
+        System.out.println("Input Vehicle ID:");
+        int vID = keyboard.nextInt();
+
+
+
+//            DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//            LocalDateTime now = LocalDateTime.now();
+//            String dateString = now.format(dTF);
+//            LocalDateTime dateTime = LocalDateTime.parse(dateString, dTF);
+
+//        LocationGPS start = passengerStore.findPassengerById(pID).getLocation();
+//        LocationGPS end = vehicleManager.findVehicleById(vID).getDepotGPSLocation();
+
+
+        System.out.println("Enter Start latitude");
+        double startLatitude = keyboard.nextDouble();
+        System.out.println("enter start longitude");
+        double startLongitude = keyboard.nextDouble();
+
+        LocationGPS startLocation = new LocationGPS(startLatitude, startLongitude);
+
+        System.out.println("Enter end latitude");
+        double endLatitude = keyboard.nextDouble();
+        System.out.println("Enter end longitude");
+        double endLongitude = keyboard.nextDouble();
+        keyboard.nextLine();
+
+        LocationGPS endLocation = new LocationGPS(endLatitude, endLongitude);
+
+
+       // bookingManager.addBooking(pID, vID, startLocation, endLocation);
 
 
 
 
 
-        bookingManager.addBooking(101,105,start,end);
+
+
+        //bookingManager.addBooking(101,105,start,end);
         bookingManager.displayAllBooking();
 
 

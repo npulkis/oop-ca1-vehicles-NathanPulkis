@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class VehicleManager {
@@ -53,7 +54,7 @@ public class VehicleManager {
                 if (type.equalsIgnoreCase("Van") ||
                         type.equalsIgnoreCase("Truck")) {
 
-                    double loadSpace = sc.nextDouble();
+                    int loadSpace = sc.nextInt();
                     // construct a Van object and add it to the passenger list
                     vehicleList.add(new Van(id, type, make, model, milesPerKwH,
                             registration, costPerMile,
@@ -119,6 +120,21 @@ public class VehicleManager {
         return typeList;
     }
 
+//    public ArrayList<Car> filterSeats(){
+//        ArrayList<Car> seatsList = new ArrayList<>();
+//
+//        for (Vehicle v: vehicleList){
+//            if (v.getType().equalsIgnoreCase("car")||v.getType().equalsIgnoreCase("4x4")){
+//                seatsList.add((Car) v);
+//            }
+//        }
+//        seatsList.sort( new seatsComparator());
+//        return seatsList;
+//    }
+
+
+
+
     public void save() {
         File file = new File("vehicles.OUT");
         FileWriter fWriter = null;
@@ -153,6 +169,7 @@ public class VehicleManager {
         }finally{
             //close resources
             try {
+                assert fWriter != null;
                 fWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();

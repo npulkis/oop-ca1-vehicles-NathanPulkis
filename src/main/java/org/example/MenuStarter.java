@@ -203,13 +203,15 @@ public class MenuStarter {
                 + "1. Show all Vehicle\n"
                 + "2. Find Vehicle by Registration\n"
                 + "3. Find Vehicle by Type\n"
-                + "4. Exit\n"
-                + "Enter Option [1,2,3,4]";
+                + "4. Find Cars by number of seats\n"
+                + "5. Exit\n"
+                + "Enter Option [1,2,3,4,5]";
 
         final int SHOW_ALL = 1;
         final int FIND_BY_REG = 2;
         final int FIND_BY_TYPE = 3;
-        final int EXIT = 4;
+        final int SHOW_BY_SEATS =4;
+        final int EXIT = 5;
 
         Scanner keyboard = new Scanner(System.in);
         int option = 0;
@@ -249,6 +251,15 @@ public class MenuStarter {
                         System.out.print("\nEnter Type: ");
                         typeSelection();
                         break;
+
+//                    case SHOW_BY_SEATS:
+//
+//                        ArrayList<Car> typeList = vehicleManager.filterSeats();
+//                        for (Vehicle b : typeList) {
+//                            System.out.println(b.toString());
+//                        }
+//                        break;
+
 
                     case EXIT:
                         System.out.println("Exit Menu option chosen");
@@ -407,7 +418,7 @@ public class MenuStarter {
 
             System.out.println("Input Passenger ID:");
 
-            int pID = keyboard.nextInt();
+             int pID = keyboard.nextInt();
 
             if (passengerStore.findPassengerById(pID) == null) {
                 System.out.println("Can't find passenger with given ID");
@@ -423,13 +434,11 @@ public class MenuStarter {
             }
 
 
-//            DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-//            LocalDateTime now = LocalDateTime.now();
-//            String dateString = now.format(dTF);
-//            LocalDateTime dateTime = LocalDateTime.parse(dateString, dTF);
+            DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime now = LocalDateTime.now();
+            String dateString = now.format(dTF);
+            LocalDateTime dateTime = LocalDateTime.parse(dateString, dTF);
 
-//        LocationGPS start = passengerStore.findPassengerById(pID).getLocation();
-//        LocationGPS end = vehicleManager.findVehicleById(vID).getDepotGPSLocation();
 
 
             System.out.println("Enter Start latitude");
@@ -443,12 +452,13 @@ public class MenuStarter {
             double endLatitude = keyboard.nextDouble();
             System.out.println("Enter end longitude");
             double endLongitude = keyboard.nextDouble();
-            keyboard.nextLine();
+
 
             LocationGPS endLocation = new LocationGPS(endLatitude, endLongitude);
 
 
-            bookingManager.addBooking(pID, vID, startLocation, endLocation);
+            bookingManager.addBooking(pID, vID, dateTime, startLocation, endLocation);
+            keyboard.nextLine();
 
         }catch (InputMismatchException | NumberFormatException err) {
             System.out.println("Wrong input please try again   " + err.toString());

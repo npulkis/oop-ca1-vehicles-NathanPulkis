@@ -4,13 +4,13 @@ package org.example;
 //
 public class Van extends Vehicle
 {
-    private double loadSpace;   // measured in litres.  For Vans and Trucks
+    private int loadSpace;   // measured in litres.  For Vans and Trucks
 
     public Van(String type, String make, String model, double milesPerKwH,
                String registration, double costPerMile,
                int year, int month, int day,
                int mileage, double latitude, double longitude,
-               double loadSpace)
+               int loadSpace)
     {
         // call superclass constructor to initialize the fields defined in Vehicle
         super(type,make,model,milesPerKwH,
@@ -28,7 +28,7 @@ public class Van extends Vehicle
                String registration, double costPerMile,
                int year, int month, int day,
                int mileage, double latitude, double longitude,
-               double loadSpace)
+               int loadSpace)
     {
         // call superclass constructor to initialize the fields defined in Vehicle
         super(id,type,make,model,milesPerKwH,
@@ -39,10 +39,10 @@ public class Van extends Vehicle
         this.loadSpace = loadSpace;
     }
 
-    public double getLoadSpace() {
+    public int getLoadSpace() {
         return loadSpace;
     }
-    public void setLoadSpace(double loadSpace) {
+    public void setLoadSpace(int loadSpace) {
         this.loadSpace = loadSpace;
     }
 
