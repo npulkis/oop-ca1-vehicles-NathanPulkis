@@ -83,7 +83,7 @@ public class PassengerStore {
         }
     }
 
-    public  Passenger findPassengerByName(String name) {
+    public Passenger findPassengerByName(String name) {
 
         for(Passenger p : passengerList){
 

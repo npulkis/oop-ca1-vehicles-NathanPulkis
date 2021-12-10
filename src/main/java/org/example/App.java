@@ -41,7 +41,7 @@ public class App
 //        passengerStore.displayAllPassengers();
 
         VehicleManager vehicleManager = new VehicleManager("vehicles.txt");
-        BookingManager bookingManager = new BookingManager();
+      //  BookingManager bookingManager = new BookingManager();
 //        System.out.println("List of all Vehicles:");
 //        vehicleManager.displayAllVehicles();
 

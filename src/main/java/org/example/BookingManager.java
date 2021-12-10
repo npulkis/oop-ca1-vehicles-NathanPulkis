@@ -1,7 +1,14 @@
 package org.example;
 
+import java.awt.print.Book;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Scanner;
+
 //
 public class BookingManager
 {
@@ -10,8 +17,9 @@ public class BookingManager
     private VehicleManager vehicleManager;
 
     // Constructor
-    public BookingManager() {
+    public BookingManager(String filename) {
         this.bookingList = new ArrayList<>();
+        loadBookingdataFromFile(filename);
     }
 
     //TODO implement functionality as per specification
@@ -44,16 +52,9 @@ public class BookingManager
 
 
 
-    public boolean addBooking(int pID, int vID,LocalDateTime dateTime, LocationGPS startLocation,LocationGPS endLocation)
+    public void addBooking(int pID, int vID,LocalDateTime dateTime, LocationGPS startLocation,LocationGPS endLocation)
     {
 
-
-
-
-
-
-
-//
 
         double cost = 10;
 
@@ -61,17 +62,18 @@ public class BookingManager
 
 
         boolean found = false;
-        // loop through here and check that email and password of passengers dont match
+
         for(Booking b: bookingList)
         {
-            if(booking.equals(b))
+            if(booking.getPassengerId()==b.getPassengerId() && booking.getBookingDateTime().isEqual(b.getBookingDateTime()))
             {
                 found = true;
-                return found;
+                System.out.println("Booking already exists");
             }
         }
-        bookingList.add(booking);
-        return found;
+        if(!found) {
+            bookingList.add(booking);
+        }
     }
 
 
@@ -122,6 +124,47 @@ public class BookingManager
         return null;
     }
 
+    public ArrayList findBookingByVehicleID(int vehicleId)
+    {
+        ArrayList list = new ArrayList();
+        for(Booking b: bookingList) {
+            if (b.getVehicleId()==vehicleId) {
+                list.add(b);
+            }
+        }
+
+        return list;
+    }
+
+    public ArrayList findBookingByPassengerID(int passengerID)
+    {
+        ArrayList list = new ArrayList();
+        for(Booking b: bookingList) {
+            if (b.getPassengerId()==passengerID) {
+                list.add(b);
+            }
+        }
+
+        return list;
+    }
+
+//    public ArrayList findBookingByPassengerName(String passengerName){
+//
+//        ArrayList list = new ArrayList();
+//
+//        System.out.println(passenger);
+//        if (passenger==null){
+//            System.out.println("Passenger not found.");
+//        }else {
+//
+//            int pid= passenger.getId();
+//            list=findBookingByPassengerID(pid);
+//        }
+//
+//        return list;
+//    }
+
+
 
     public void displayAllBookings()
     {
@@ -131,21 +174,104 @@ public class BookingManager
         }
     }
 
-//    public int assignBookingId()
-//    {
-//        int id = 0;
-//        int largest = 0;
-//        int new_load = 0;
-//        for (Booking b : bookingList) {
-//            new_load = b.getBookingId();
-//            if(new_load > largest)
-//            {
-//                largest = new_load;
-//            }
-//        }
-//        id = largest + 1;
-//        return id;
-//    }
+
+    private void loadBookingdataFromFile(String filename) {
+
+        try {
+            Scanner sc = new Scanner(new File(filename));
+//           Delimiter: set the delimiter to be a comma character ","
+//                    or a carriage-return '\r', or a newline '\n'
+            sc.useDelimiter("[,\r\n]+");
+
+            while (sc.hasNext()) {
+                int id = sc.nextInt();
+                int passengerID = sc.nextInt();
+                int vehicleID = sc.nextInt();
+                int year = sc.nextInt();
+                int month = sc.nextInt();
+                int day = sc.nextInt();
+                int hour = sc.nextInt();
+                int minute = sc.nextInt();
+                double startLatitude = sc.nextDouble();
+                double startLongitude = sc.nextDouble();
+                double endLatitude= sc.nextDouble();
+                double endLongitude = sc.nextDouble();
+                double cost = sc.nextDouble();
+
+               String date = Integer.toString(year)+"-"+Integer.toString(month)+"-"+Integer.toString(day)+" "+Integer.toString(hour)+":"+Integer.toString(minute);
+                DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-M-d H:m");
+                LocalDateTime dateTime = LocalDateTime.parse(date, dTF);
+
+                LocationGPS startLocation = new LocationGPS(startLatitude,startLongitude);
+                LocationGPS endLocation = new LocationGPS(endLatitude,endLongitude);
+
+
+               bookingList.add(new Booking(id, passengerID,vehicleID,dateTime,startLocation,endLocation,cost));
+            }
+            sc.close();
+
+        } catch (IOException e) {
+            System.out.println("Exception thrown. " + e);
+        }
+    }
+
+
+
+    public void save() {
+        File file = new File("bookings.OUT");
+        FileWriter fWriter = null;
+        try {
+            fWriter = new FileWriter(file);
+
+            System.out.println("saving");
+            for (Booking b : bookingList) {
+                int bookingID = b.getBookingId();
+                int passengerID = b.getPassengerId();
+                int vehicleID = b.getVehicleId();
+                int year = b.getBookingDateTime().getYear();
+                int month = b.getBookingDateTime().getMonthValue();
+                int day = b.getBookingDateTime().getDayOfMonth();
+                int hour = b.getBookingDateTime().getHour();
+                int minute = b.getBookingDateTime().getMinute();
+                double startLatitude = b.getStartLocation().getLatitude();
+                double startLongitude = b.getStartLocation().getLatitude();
+                double endLatitude=b.getEndLocation().getLatitude();
+                double endLongitde=b.getEndLocation().getLongitude();
+                double cost= b.getCost();
+
+
+                String info = bookingID+","+passengerID+","+vehicleID+","+year+","+month+","+day+","+hour+","+minute+
+                        ","+startLatitude+","+startLongitude+","+endLatitude+","+endLongitde+","+cost;
+                fWriter.write(info+"\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            //close resources
+            try {
+                assert fWriter != null;
+                fWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean checkAvailability(int vehicleID, LocalDateTime bookingTime){
+
+        ArrayList<Booking> list = findBookingByVehicleID(vehicleID);
+
+        if(!list.isEmpty()){
+            for (Booking b : list){
+                if (b.getBookingDateTime().isEqual(bookingTime)){
+                    return true;
+
+                }
+            }
+        }
+
+    return false;}
+
 
 
 
