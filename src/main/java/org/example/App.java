@@ -41,6 +41,7 @@ public class App
 //        passengerStore.displayAllPassengers();
 
         VehicleManager vehicleManager = new VehicleManager("vehicles.txt");
+        BookingManager bookingManager = new BookingManager();
 //        System.out.println("List of all Vehicles:");
 //        vehicleManager.displayAllVehicles();
 
@@ -70,7 +71,7 @@ public class App
         DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 
-        BookingManager bookingManager = new BookingManager();
+        //BookingManager bookingManager = new BookingManager();
 
         LocalDateTime now = LocalDateTime.now();
         String dateString= now.format(dTF);
@@ -128,8 +129,7 @@ public class App
 
 
 
-        //bookingManager.addBooking(101,105,start,end);
-        bookingManager.displayAllBooking();
+
 
 
 

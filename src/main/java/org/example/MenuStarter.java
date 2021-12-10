@@ -3,7 +3,9 @@ package org.example;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +27,9 @@ public class MenuStarter {
         // create VehicleManager, and load all vehicles from text file
         vehicleManager = new VehicleManager("vehicles.OUT");
 
+        //BookingManager bookingManager = new BookingManager("booking.txt");
 
+        bookingManager = new BookingManager();
 
 
         try {
@@ -33,8 +37,6 @@ public class MenuStarter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
 
 
         //   vehicleManager.displayAllVehicles();
@@ -121,7 +123,7 @@ public class MenuStarter {
         final int SHOW_ALL = 1;
         final int FIND_BY_NAME = 2;
         final int ADD_PASSENGER = 3;
-        final int DELETE_PASSENGER =4;
+        final int DELETE_PASSENGER = 4;
         final int EXIT = 5;
 
 
@@ -156,8 +158,8 @@ public class MenuStarter {
 
                         boolean result;
                         do {
-                           result=addPassenger();
-                        }while (!result);
+                            result = addPassenger();
+                        } while (!result);
 
                         promptEnterKey();
                         break;
@@ -166,18 +168,18 @@ public class MenuStarter {
                         System.out.println("Delete Passenger chosen");
 
                         System.out.println("Enter Passenger id:");
-                       int id = keyboard.nextInt();
-                       keyboard.nextLine();
+                        int id = keyboard.nextInt();
+                        keyboard.nextLine();
 
-                       Passenger pass = passengerStore.findPassengerById(id);
-                       if (pass ==null){
-                           System.out.println("Passenger not found");
-                           promptEnterKey();
-                           break;
-                       }
-                       passengerStore.removePassenger(pass);
+                        Passenger pass = passengerStore.findPassengerById(id);
+                        if (pass == null) {
+                            System.out.println("Passenger not found");
+                            promptEnterKey();
+                            break;
+                        }
+                        passengerStore.removePassenger(pass);
 
-                       promptEnterKey();
+                        promptEnterKey();
                         break;
 
 
@@ -210,7 +212,7 @@ public class MenuStarter {
         final int SHOW_ALL = 1;
         final int FIND_BY_REG = 2;
         final int FIND_BY_TYPE = 3;
-        final int SHOW_BY_SEATS =4;
+        final int SHOW_BY_SEATS = 4;
         final int EXIT = 5;
 
         Scanner keyboard = new Scanner(System.in);
@@ -277,7 +279,6 @@ public class MenuStarter {
     }
 
 
-
     private void displayBookingMenu() {
         final String MENU_ITEMS = "\n*** BOOKING MENU ***\n"
                 + "1.Show all bookings\n"
@@ -299,7 +300,8 @@ public class MenuStarter {
 
                 switch (option) {
                     case SHOW_ALL:
-                       break;
+                        bookingManager.displayAllBookings();
+                        break;
                     case MAKE_BOOKING:
 
                         boolean result;
@@ -318,8 +320,8 @@ public class MenuStarter {
                         break;
                 }
 
-            } catch (InputMismatchException | NumberFormatException e) {
-                System.out.print("Invalid option - please enter number in range");
+            } catch (InputMismatchException | NumberFormatException | NullPointerException e) {
+                //System.out.print("Invalid option - please enter number in range");
             }
         } while (option != EXIT);
 
@@ -374,7 +376,7 @@ public class MenuStarter {
             if (!matcher.matches()) {
                 System.out.println("\nWrong email input: Email must only contain A-Z a-z 0-9 .,-,_ and @ ");
 
-             return false;
+                return false;
             }
 
             System.out.print("Enter Passenger phone number: ");
@@ -388,7 +390,7 @@ public class MenuStarter {
                 System.out.println("\nWrong phone input: Phone must only contain  0-9 and - \n" +
                         "please try again");
 
-               return false;
+                return false;
             }
 
 
@@ -404,9 +406,10 @@ public class MenuStarter {
             System.out.println("Wrong input please try again   " + err.toString());
             return false;
         }
-    return true;}
+        return true;
+    }
 
-    public boolean makeBooking(){
+    public boolean makeBooking() {
 
         try {
             Scanner keyboard = new Scanner(System.in);
@@ -418,7 +421,7 @@ public class MenuStarter {
 
             System.out.println("Input Passenger ID:");
 
-             int pID = keyboard.nextInt();
+            int pID = keyboard.nextInt();
 
             if (passengerStore.findPassengerById(pID) == null) {
                 System.out.println("Can't find passenger with given ID");
@@ -433,12 +436,137 @@ public class MenuStarter {
                 return false;
             }
 
+            String date = "";
+            LocalDateTime now = LocalDateTime.now();
+            int year = 0, month = 0, day = 0, hour = 0, minute = 0;
+
+
+            while (true) {
+                System.out.println("enter booking year: ");
+                year = keyboard.nextInt();
+                if (year >= now.getYear()) {
+                    break;
+                }
+                System.out.println("Enter a year that that is not in the past");
+            }
+//
+//            do {
+//                System.out.println("enter booking year: ");
+//                 year = keyboard.nextInt();
+//                 keyboard.nextLine();
+//            }while (year < now.getYear());
+
+            date += Integer.toString(year);
+            date += "-";
+
+
+            if (year == now.getYear())
+                while (true) {
+                    System.out.println("enter booking month:");
+                    month = keyboard.nextInt();
+                    if (month >= now.getMonthValue() && month <= 12) {
+                        break;
+                    }
+                    System.out.println("enter month thats not in the past");
+                }
+//
+//                do {
+//                    System.out.println("enter booking month:");
+//                    month = keyboard.nextInt();
+//                }while (month< now.getMonthValue() || month>12);
+            if (year > now.getYear()) {
+
+                while (true) {
+                    System.out.println("enter booking month:");
+                    month = keyboard.nextInt();
+                    if (month >= 1 && month <= 12) {
+                        break;
+                    }
+                    System.out.println("enter month that's between 1-12 inclusive");
+                }
+//                do {
+//                    System.out.println("enter booking month:");
+//                    month = keyboard.nextInt();
+//                }while (month<1 || month >12);
+
+            }
+
+
+            if (month < 10) {
+                date += "0";
+                date += Integer.toString(month);
+                date += "-";
+            } else {
+                date += Integer.toString(month);
+                date += "-";
+            }
+
+
+            while (true) {
+                System.out.println("enter booking day: ");
+                day = keyboard.nextInt();
+                if (day >= 1 && day <= 31) {
+                    break;
+                }
+                System.out.println("enter date 1-31");
+            }
+
+//            do {
+//                System.out.println("enter booking day: ");
+//                day= keyboard.nextInt();
+//            }while (day<1 || day>31);
+
+            if (day < 10) {
+                date += "0";
+                date += Integer.toString(day);
+                date += " ";
+
+            } else {
+                date += Integer.toString(day);
+                date += " ";
+            }
+
+
+            while (true) {
+                System.out.println("enter booking hour");
+                hour = keyboard.nextInt();
+                if (hour >= 1 && hour <= 24) {
+                    break;
+                }
+                System.out.println("enter houer between 1-24");
+            }
+            if (hour < 10) {
+                date += "0";
+                date += Integer.toString(hour);
+                date += ":";
+            } else {
+                date += Integer.toString(hour);
+                date += ":";
+            }
+
+
+            while (true) {
+                System.out.println("enter booking minute");
+                hour = keyboard.nextInt();
+                if (hour >= 1 && hour <= 59) {
+                    break;
+                }
+                System.out.println("enter minute 1-59");
+            }
+
+            if (hour < 10) {
+                date += "0";
+                date += Integer.toString(hour);
+            } else {
+                date += Integer.toString(hour);
+            }
+
+            System.out.println(date);
+
 
             DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime now = LocalDateTime.now();
-            String dateString = now.format(dTF);
-            LocalDateTime dateTime = LocalDateTime.parse(dateString, dTF);
-
+            //LocalDateTime now = LocalDateTime.now();
+            LocalDateTime dateTime = LocalDateTime.parse(date, dTF);
 
 
             System.out.println("Enter Start latitude");
@@ -450,6 +578,7 @@ public class MenuStarter {
 
             System.out.println("Enter end latitude");
             double endLatitude = keyboard.nextDouble();
+
             System.out.println("Enter end longitude");
             double endLongitude = keyboard.nextDouble();
 
@@ -460,19 +589,22 @@ public class MenuStarter {
             bookingManager.addBooking(pID, vID, dateTime, startLocation, endLocation);
             keyboard.nextLine();
 
-        }catch (InputMismatchException | NumberFormatException err) {
-            System.out.println("Wrong input please try again   " + err.toString());
-            return false;
-        }
-    return true;}
 
-    public void promptEnterKey(){
+        } catch (InputMismatchException | NumberFormatException err) {
+
+            System.out.println("Wrong input please try again   " + err.toString());
+
+        }
+        return true;
+    }
+
+    public void promptEnterKey() {
         System.out.println("\nPress \"ENTER\" to continue...");
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
     }
 
-    public void close(){
+    public void close() {
         vehicleManager.save();
         passengerStore.save();
         System.out.println("Exiting Program.....");
