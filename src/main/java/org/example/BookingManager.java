@@ -4,6 +4,7 @@ package org.example;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -55,13 +56,17 @@ public class BookingManager
 
 
 
-    public void addBooking(int pID, int vID,LocalDateTime dateTime, LocationGPS startLocation,LocationGPS endLocation)
+    public void addBooking(int pID, int vID,LocalDateTime dateTime, LocationGPS startLocation,LocationGPS endLocation,double cost)
     {
 
+         DecimalFormat df = new DecimalFormat("0.00");
+         cost = Double.parseDouble(df.format(cost));
 
-        double cost = 10;
 
         Booking booking = new Booking( pID, vID, dateTime, startLocation, endLocation, cost);
+
+
+
 
 
         boolean found = false;
@@ -102,34 +107,7 @@ public class BookingManager
 
 
 
-    public double calculateCosts(String type, double distance)
-    {
-        double total = 0;
-        double rawTotal = 0;
-
-        if (type.equalsIgnoreCase("Car"))
-        {
-            rawTotal = distance * 2.00;
-            return rawTotal;
-        }
-        else if (type.equalsIgnoreCase("4x4"))
-        {
-            rawTotal = distance * 4.00;
-            return rawTotal;
-        }
-        else if (type.equalsIgnoreCase("van"))
-        {
-            rawTotal = distance * 6.00;
-            return rawTotal;
-        }
-        else if (type.equalsIgnoreCase("truck"))
-        {
-            rawTotal = distance * 10.00;
-            return rawTotal;
-        }
-        return -1;
-    }
-
+   
 
     public void removeBooking(Booking b){
 
@@ -293,7 +271,7 @@ public class BookingManager
                 int hour = b.getBookingDateTime().getHour();
                 int minute = b.getBookingDateTime().getMinute();
                 double startLatitude = b.getStartLocation().getLatitude();
-                double startLongitude = b.getStartLocation().getLatitude();
+                double startLongitude = b.getStartLocation().getLongitude();
                 double endLatitude=b.getEndLocation().getLatitude();
                 double endLongitde=b.getEndLocation().getLongitude();
                 double cost= b.getCost();
@@ -330,6 +308,77 @@ public class BookingManager
         }
 
     return false;}
+
+    public double deg2rad(double angle){return angle * Math.PI / 100;}
+
+    public double Distance(LocationGPS start,LocationGPS end){
+
+       double startLat = Math.toRadians(start.getLatitude());
+       double startLon= Math.toRadians(start.getLongitude());
+       double endLat = Math.toRadians(end.getLatitude());
+       double endLon = Math.toRadians(end.getLongitude());
+
+      double dlong = endLon-startLon;
+      double dlat = endLat-startLat;
+
+       double ans = Math.pow(Math.sin(dlat/2),2)+Math.cos(startLat)*Math.cos(endLat)*Math.pow(Math.sin(dlong/2),2);
+       ans = 2 *  Math.asin(Math.sqrt(ans));
+
+       double R =3956;
+
+       ans = ans * R;
+
+        return ans;
+        
+    }
+
+    public double calculateCosts(String type, double distance)
+    {
+        double total;
+
+
+        if (type.equalsIgnoreCase("Car"))
+        {
+            total = distance * 2.00;
+            return total;
+        }
+        else if (type.equalsIgnoreCase("4x4"))
+        {
+            total = distance * 4.00;
+            return total;
+        }
+        else if (type.equalsIgnoreCase("van"))
+        {
+            total = distance * 6.00;
+            return total;
+        }
+        else if (type.equalsIgnoreCase("truck"))
+        {
+            total = distance * 10.00;
+            return total;
+        }
+        return -1;
+    }
+
+//    public double averageJourney(){
+//
+//
+//        int count = 0;
+//        double total=0;
+//        double distance=0;
+//        double cost=0;
+//
+//        for (Booking b :bookingList){
+//
+//            distance = Distance(b.getStartLocation(),b.getEndLocation());
+//            cost = b.getCost();
+//
+//            total += distance * cost;
+//            count += 1;
+//            System.out.println(distance);
+//        }
+//        System.out.println(distance);
+//  return (total / count); }
 
 
 

@@ -1,6 +1,7 @@
 package org.example;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 
 public abstract class Vehicle
@@ -141,6 +142,12 @@ public abstract class Vehicle
                 + depotGPSLocation + '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vehicle vehicle = (Vehicle) o;
+        return id == vehicle.id && Double.compare(vehicle.milesPerKwH, milesPerKwH) == 0 && Double.compare(vehicle.costPerMile, costPerMile) == 0 && mileage == vehicle.mileage && type.equals(vehicle.type) && make.equals(vehicle.make) && model.equals(vehicle.model) && registration.equals(vehicle.registration) && lastServicedDate.equals(vehicle.lastServicedDate) && depotGPSLocation.equals(vehicle.depotGPSLocation);
+    }
 
-     
 }

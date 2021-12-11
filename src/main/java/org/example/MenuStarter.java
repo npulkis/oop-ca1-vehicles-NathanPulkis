@@ -22,6 +22,7 @@ public class MenuStarter {
 
     public void start() {
 
+
         String passengerFile = "passengers.ser";
         String vehicleFile = "vehicles.ser";
         String bookingsFile = "bookings.ser";
@@ -232,6 +233,7 @@ public class MenuStarter {
                         for (Vehicle v : vehicles) {
                             System.out.println(v.toString());
                         }
+
                         promptEnterKey();
                         break;
                     case FIND_BY_REG:
@@ -290,13 +292,15 @@ public class MenuStarter {
                     + "1.Display Bookings\n"
                     + "2.Make a booking\n"
                     + "3.Delete a booking\n"
-                    + "4.Exit\n"
-                    + "Enter Option [1,2,3,4]";
+                    + "4.Edit Booking"
+                    + "5.Exit\n"
+                    + "Enter Option [1,2,3,4,5]";
 
             final int SHOW_ALL = 1;
             final int MAKE_BOOKING = 2;
             final int DELETE_BOOKING = 3;
-            final int EXIT = 4;
+            final int EDIT_BOOKING = 4;
+            final int EXIT = 5;
 
             Scanner keyboard = new Scanner(System.in);
             int option = 0;
@@ -337,6 +341,10 @@ public class MenuStarter {
                             promptEnterKey();
                             break;
 
+                        case EDIT_BOOKING:
+                            editBookingMenu();
+                            keyboard.nextLine();
+                            break;
                         case EXIT:
                             System.out.println("Exit Menu option chosen");
                             break;
@@ -381,6 +389,7 @@ public class MenuStarter {
                 switch (option) {
                     case SHOW_ALL:
                         bookingManager.displayAllForm();
+                        //System.out.println(bookingManager.averageJourney());
                         promptEnterKey();
                         break;
                     case SHOW_BID:
@@ -586,6 +595,8 @@ public class MenuStarter {
                 return false;
             }
 
+            Vehicle vehicle = vehicleManager.findVechicleById(vID);
+
             String date = "";
             LocalDateTime now = LocalDateTime.now();
             int year = 0, month = 0, day = 0, hour = 0, minute = 0;
@@ -715,12 +726,7 @@ public class MenuStarter {
                 System.out.println("Sorry the vehicle you have chosen is already book for the date and time specified.");
 
             } else {
-                System.out.println("Enter Start latitude");
-                double startLatitude = keyboard.nextDouble();
-                System.out.println("enter start longitude");
-                double startLongitude = keyboard.nextDouble();
-
-                LocationGPS startLocation = new LocationGPS(startLatitude, startLongitude);
+                LocationGPS startLocation = passenger.getLocation();
 
                 System.out.println("Enter end latitude");
                 double endLatitude = keyboard.nextDouble();
@@ -731,8 +737,19 @@ public class MenuStarter {
 
                 LocationGPS endLocation = new LocationGPS(endLatitude, endLongitude);
 
+                double distance=0;
+                distance +=bookingManager.Distance(vehicle.getDepotGPSLocation(),startLocation);
 
-                bookingManager.addBooking(pID, vID, dateTime, startLocation, endLocation);
+                distance +=bookingManager.Distance(startLocation,endLocation);
+                distance +=bookingManager.Distance(endLocation,vehicle.getDepotGPSLocation());
+
+               Vehicle v = vehicleManager.findVechicleById(vID);
+               String type = v.getType();
+                double cost = bookingManager.calculateCosts(type,distance);
+
+
+
+                bookingManager.addBooking(pID, vID, dateTime, startLocation, endLocation,cost);
                 keyboard.nextLine();
             }
 
@@ -745,11 +762,105 @@ public class MenuStarter {
         return true;
     }
 
+
+    public void editBookingMenu(){
+
+        {
+
+
+            Scanner keyboard = new Scanner(System.in);
+            Booking booking;
+            int bID=0;
+            while (true){
+
+                System.out.println("Enter Booking ID");
+                bID = keyboard.nextInt();
+                keyboard.nextLine();
+                booking = bookingManager.findBookingById(bID);
+                if (booking!=null){
+                    break;
+                }
+                System.out.println("Booking doesnt exist");
+            }
+
+
+            final String MENU_ITEMS = "\n*** BOOKING Views ***\n"
+                    + "1.Edit Passenger ID\n"
+                    + "2.Display by Passenger ID\n"
+                    + "3.Display by Passenger name\n"
+                    + "4.Display by Booking ID\n"
+                    + "5.Display all future bookings\n"
+                    + "Enter Option [1,2,3,4,5]";
+
+            final int EDIT_PID = 1;
+            final int EDIT_VID = 2;
+            final int EDIT_DATE = 3;
+            final int EDIT_START = 4;
+            final int EDIT_END = 5;
+            final int EXIT = 6;
+
+
+            int option = 0;
+
+            System.out.println("\n" + MENU_ITEMS);
+            try {
+                String usersInput = keyboard.nextLine();
+                option = Integer.parseInt(usersInput);
+
+                switch (option) {
+                    case EDIT_PID:
+
+
+                        System.out.println("enter passenfer id:");
+                        int pid= keyboard.nextInt();
+
+                        booking.setPassengerId(pid);
+
+                        promptEnterKey();
+                        break;
+                    case EDIT_VID:
+                        typeSelection();
+
+                        int vID=0;
+                        while (true) {
+                            System.out.println("Input Vehicle ID:");
+                            vID = keyboard.nextInt();
+                            if (vehicleManager.findVechicleById(vID) != null){
+                                 break;
+                            }
+                            System.out.println("Can't find vehicle with given ID");
+
+                        }
+                        booking.setVehicleId(vID);
+                        break;
+                    case EXIT:
+                        System.out.println("Exit Menu option chosen");
+                        break;
+                    default:
+                        System.out.print("Invalid option - please enter number in range");
+                        break;
+                }
+
+            } catch (InputMismatchException | NumberFormatException | NullPointerException e) {
+                System.out.print("Invalid option - please enter number in range");
+            }
+
+
+        }
+
+
+    }
+
+    public void editPassengerMenu(){
+
+    }
+
     public void promptEnterKey() {
         System.out.println("\nPress \"ENTER\" to continue...");
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
     }
+
 
     public void close() {
 

@@ -114,4 +114,13 @@ class Booking
                 ", cost=" + cost +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return bookingId == booking.bookingId && passengerId == booking.passengerId && vehicleId == booking.vehicleId && Double.compare(booking.cost, cost) == 0 && bookingDateTime.equals(booking.bookingDateTime) && startLocation.equals(booking.startLocation) && endLocation.equals(booking.endLocation);
+    }
+
 }
