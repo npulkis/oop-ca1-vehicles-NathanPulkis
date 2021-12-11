@@ -1,8 +1,6 @@
 package org.example;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
@@ -108,29 +106,43 @@ public class VehicleManager {
         return vehicleList;
     }
 
-    public ArrayList<Vehicle> findVechicleByType(String type){
-        ArrayList<Vehicle> typeList = new ArrayList<>();
+    public ArrayList findVechicleByType(String type){
+        ArrayList<Van>  vanList = new ArrayList<>();
+        ArrayList<Car> carList = new ArrayList<>();
+
 
         for (Vehicle v: vehicleList){
             if (v.getType().equalsIgnoreCase(type)){
-                typeList.add(v);
+                if (type.equalsIgnoreCase("car")||type.equalsIgnoreCase("4x4")){
+                    carList.add((Car) v);
+                }
+                else {
+                    vanList.add((Van) v);
+                }
             }
         }
-        typeList.sort(new VehicleRegistrationComparator());
-        return typeList;
+        if (type.equalsIgnoreCase("car")||type.equalsIgnoreCase("4x4")){
+            carList.sort(new VehicleRegistrationComparator());
+            return carList;
+        }else{
+            vanList.sort(new VehicleRegistrationComparator());
+            return vanList;
+        }
+
     }
 
-//    public ArrayList<Car> filterSeats(){
-//        ArrayList<Car> seatsList = new ArrayList<>();
-//
-//        for (Vehicle v: vehicleList){
-//            if (v.getType().equalsIgnoreCase("car")||v.getType().equalsIgnoreCase("4x4")){
-//                seatsList.add((Car) v);
-//            }
-//        }
-//        seatsList.sort( new seatsComparator());
-//        return seatsList;
-//    }
+
+    public ArrayList<Car> filterSeats(ArrayList<Car> carArrayList,int seats){
+        ArrayList<Car> seatsList = new ArrayList<>();
+
+        for (Car c:carArrayList){
+            if (c.getSeats()==seats){
+                seatsList.add((Car) c);
+            }
+        }
+        seatsList.sort( new VehicleRegistrationComparator());
+        return seatsList;
+    }
 
 
 
@@ -141,7 +153,6 @@ public class VehicleManager {
         try {
             fWriter = new FileWriter(file);
 
-            System.out.println("saving");
             for (Vehicle v : this.vehicleList) {
                 int id = v.getId();
                 String type = v.getType();  // vehicle type
@@ -176,5 +187,6 @@ public class VehicleManager {
             }
         }
     }
+
 
 }

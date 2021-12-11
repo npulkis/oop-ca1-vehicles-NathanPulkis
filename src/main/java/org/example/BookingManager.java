@@ -1,25 +1,28 @@
 package org.example;
 
-import java.awt.print.Book;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 //
 public class BookingManager
 {
     private final ArrayList<Booking> bookingList;
-    private PassengerStore passengerStore;
-    private VehicleManager vehicleManager;
+    private final PassengerStore passengerStore;
+    private final VehicleManager vehicleManager;
 
     // Constructor
-    public BookingManager(String filename) {
+    public BookingManager(String filename,PassengerStore pS,VehicleManager vM) {
         this.bookingList = new ArrayList<>();
         loadBookingdataFromFile(filename);
+        passengerStore = pS;
+        vehicleManager = vM;
     }
 
     //TODO implement functionality as per specification
@@ -76,7 +79,26 @@ public class BookingManager
         }
     }
 
+    public void displayForm(Booking b){
 
+            System.out.println("-----------------------------------------------------");
+            System.out.println("Booking ID: "+b.getBookingId());
+            System.out.println("Passenger ID: "+b.getPassengerId());
+            System.out.println("Vehicle ID : "+b.getVehicleId());
+            System.out.println("Booking Date and Time: "+b.getBookingDateTime());
+            System.out.println("Start Location: "+b.getStartLocation());
+            System.out.println("End Location: "+b.getEndLocation());
+            System.out.println("Total Cost: "+b.getCost());
+            System.out.println("-----------------------------------------------------");
+
+    }
+
+    public void displayAllForm(){
+       ArrayList<Booking> booking = bookingList;
+       for (Booking b:booking){
+           displayForm(b);
+       }
+    }
 
 
 
@@ -109,13 +131,18 @@ public class BookingManager
     }
 
 
+    public void removeBooking(Booking b){
 
+        System.out.println("Booking "+b.getBookingId()+" removed");
+        bookingList.remove(b);
+    }
 
 
 
 
     public Booking findBookingById(int bookingId)
     {
+
         for(Booking b: bookingList) {
             if (b.getBookingId() == bookingId) {
                 return b;
@@ -148,22 +175,15 @@ public class BookingManager
         return list;
     }
 
-//    public ArrayList findBookingByPassengerName(String passengerName){
-//
-//        ArrayList list = new ArrayList();
-//
-//        System.out.println(passenger);
-//        if (passenger==null){
-//            System.out.println("Passenger not found.");
-//        }else {
-//
-//            int pid= passenger.getId();
-//            list=findBookingByPassengerID(pid);
-//        }
-//
-//        return list;
-//    }
+    public void showBookingByPassengerName(String name){
 
+            ArrayList<Booking> nameList=filterByNameBookings(name);
+            nameList.sort(new BookingDateComparator());
+            for (Booking b:nameList){
+                displayForm(b);
+            }
+
+        }
 
 
     public void displayAllBookings()
@@ -173,6 +193,46 @@ public class BookingManager
             System.out.println(b.toString());
         }
     }
+
+    public void displayFutureBookings(){
+        System.out.println("These are all the future bookings");
+        LocalDateTime now = LocalDateTime.now();
+        ArrayList<Booking> futureBookings = new ArrayList<>();
+        for (Booking b: bookingList){
+            if (b.getBookingDateTime().isAfter(now)){
+                futureBookings.add(b);
+            }
+        }
+        if (bookingList.isEmpty()){
+            System.out.println("There are currently now booking in the future");
+        }else {
+            futureBookings.sort(new BookingDateComparator());
+            for (Booking b : futureBookings){
+             displayForm(b);
+            }
+        }
+
+
+    }
+
+    public ArrayList<Booking> filterByNameBookings(String name){
+        Passenger passenger = passengerStore.findPassengerByName(name);
+        ArrayList<Booking> nameFilter= new ArrayList<>();
+        if (passenger==null){
+            System.out.println("No passenger with that name found");
+            return null;
+        }
+
+        for (Booking b :bookingList){
+            if (b.getPassengerId()== passenger.getId()){
+                nameFilter.add(b);
+            }
+        }
+        if (nameFilter.isEmpty()){
+            System.out.println("no booking with that passenger found");
+            return null;
+        }
+   return nameFilter; }
 
 
     private void loadBookingdataFromFile(String filename) {
@@ -198,7 +258,7 @@ public class BookingManager
                 double endLongitude = sc.nextDouble();
                 double cost = sc.nextDouble();
 
-               String date = Integer.toString(year)+"-"+Integer.toString(month)+"-"+Integer.toString(day)+" "+Integer.toString(hour)+":"+Integer.toString(minute);
+               String date = year +"-"+ month +"-"+ day +" "+ hour +":"+ minute;
                 DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-M-d H:m");
                 LocalDateTime dateTime = LocalDateTime.parse(date, dTF);
 
@@ -223,7 +283,6 @@ public class BookingManager
         try {
             fWriter = new FileWriter(file);
 
-            System.out.println("saving");
             for (Booking b : bookingList) {
                 int bookingID = b.getBookingId();
                 int passengerID = b.getPassengerId();

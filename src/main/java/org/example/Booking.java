@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 //
 class Booking
 {
-    private IdGenerator idGenerator = IdGenerator.getInstance("next-id-store.txt");  // get access to the id Generator
+    private final IdGenerator idGenerator = IdGenerator.getInstance("next-id-store.txt");  // get access to the id Generator
 
 
     private int bookingId;

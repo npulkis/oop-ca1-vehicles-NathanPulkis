@@ -1,17 +1,19 @@
 package org.example;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Passenger {
-    private int id;
+public class Passenger implements Serializable {
+
+    private final int id;
     private String name;
     private String email;
     private String phone;
     private LocationGPS location;  // Home location
 
-    private IdGenerator idGenerator = IdGenerator.getInstance("next-id-store.txt");  // get access to the id Generator
+    private final IdGenerator idGenerator = IdGenerator.getInstance("next-id-store.txt");  // get access to the id Generator
 
     /**
      * Constructor to be called when a new Passenger is created.
@@ -54,7 +56,7 @@ public class Passenger {
         return id;
     }
 
-    private void setId() {}; // prevents the id from being set (as it should only come from autogenerator)
+    private void setId() {} // prevents the id from being set (as it should only come from autogenerator)
 
     public String getName() {
         return name;

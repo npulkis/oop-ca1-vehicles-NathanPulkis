@@ -1,9 +1,7 @@
 package org.example;
 
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,6 +9,7 @@ import java.util.Scanner;
 public class PassengerStore {
 
     private final ArrayList<Passenger> passengerList;
+    private final String filename ="passengers.ser";
 
     public PassengerStore(String fileName) {
         this.passengerList = new ArrayList<>();
@@ -38,31 +37,31 @@ public class PassengerStore {
      * Read Passenger records from a text file and create and add Passenger
      * objects to the PassengerStore.
      */
-    private void loadPassengerDataFromFile(String filename) {
-
-        try {
-            Scanner sc = new Scanner(new File(filename));
-//           Delimiter: set the delimiter to be a comma character ","
-//                    or a carriage-return '\r', or a newline '\n'
-            sc.useDelimiter("[,\r\n]+");
-
-            while (sc.hasNext()) {
-                int id = sc.nextInt();
-                String name = sc.next();
-                String email = sc.next();
-                String phone = sc.next();
-                double latitude = sc.nextDouble();
-                double longitude = sc.nextDouble();
-
-                // construct a Passenger object and add it to the passenger list
-                passengerList.add(new Passenger(id, name, email, phone, latitude, longitude));
-            }
-            sc.close();
-
-        } catch (IOException e) {
-            System.out.println("Exception thrown. " + e);
-        }
-    }
+//    private void loadPassengerDataFromFile(String filename) {
+//
+//        try {
+//            Scanner sc = new Scanner(new File(filename));
+////           Delimiter: set the delimiter to be a comma character ","
+////                    or a carriage-return '\r', or a newline '\n'
+//            sc.useDelimiter("[,\r\n]+");
+//
+//            while (sc.hasNext()) {
+//                int id = sc.nextInt();
+//                String name = sc.next();
+//                String email = sc.next();
+//                String phone = sc.next();
+//                double latitude = sc.nextDouble();
+//                double longitude = sc.nextDouble();
+//
+//                // construct a Passenger object and add it to the passenger list
+//                passengerList.add(new Passenger(id, name, email, phone, latitude, longitude));
+//            }
+//            sc.close();
+//
+//        } catch (IOException e) {
+//            System.out.println("Exception thrown. " + e);
+//        }
+//    }
 
     // TODO - see functional spec for details of code to add
 
@@ -108,39 +107,101 @@ return null;}
         passengerList.remove(p);
     }
 
-    public void save() {
-        File file = new File("passengers.OUT");
-        FileWriter fWriter = null;
-        try {
-            fWriter = new FileWriter(file);
 
-            System.out.println("saving");
-            for (Passenger p : this.passengerList) {
-                int id = p.getId();
-                String name = p.getName();
-                String email = p.getEmail();
-                String phone = p.getPhone();
-                double latitude = p.getLocation().getLatitude();  // Depot GPS location
-                double longitude = p.getLocation().getLongitude();
-
-                String info = id+","+name+","+email+","+phone+","+latitude+","+longitude;
-//                if (v instanceof Van)
-//                    info += ((Van) v).getLoadSpace();
-//                else
-//                    info += ((Car) v).getSeats();
-                fWriter.write(info+"\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally{
-            //close resources
-            try {
-                assert fWriter != null;
-                fWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public void displayAllForm(){
+        ArrayList<Passenger> passengers = passengerList;
+        passengers.sort(new PassengerNameComparator());
+        for (Passenger p : passengers){
+            displayForm(p);
         }
+    }
+
+    public void displayForm(Passenger p){
+        System.out.println("---------------------------------");
+        System.out.println("Passenger ID: "+p.getId());
+        System.out.println("Passenger Name: "+p.getName());
+        System.out.println("Passenger Email: "+p.getEmail());
+        System.out.println("Passenger Phone: "+p.getPhone());
+        System.out.println("Location: "+p.getLocation());
+        System.out.println("---------------------------------");
+
+    }
+
+//    public void save() {
+//        File file = new File("passengers.OUT");
+//        FileWriter fWriter = null;
+//        try {
+//            fWriter = new FileWriter(file);
+//
+//            for (Passenger p : this.passengerList) {
+//                int id = p.getId();
+//                String name = p.getName();
+//                String email = p.getEmail();
+//                String phone = p.getPhone();
+//                double latitude = p.getLocation().getLatitude();  // Depot GPS location
+//                double longitude = p.getLocation().getLongitude();
+//
+//                String info = id+","+name+","+email+","+phone+","+latitude+","+longitude;
+//                fWriter.write(info+"\n");
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }finally{
+//            //close resources
+//            try {
+//                assert fWriter != null;
+//                fWriter.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+
+    public void loadPassengerDataFromFile(String fileName){
+
+        try{
+            FileInputStream fin = new FileInputStream(fileName);
+            ObjectInputStream ois = new ObjectInputStream(fin);
+
+            Object o;
+
+            while (true){
+                try {
+                    o = ois.readObject();
+
+                    if (o instanceof Passenger){
+                        passengerList.add((Passenger) o);
+                    }else {
+                        System.err.println("Unexpected object in file");
+                    }
+                }catch (IOException ex){
+                    break;
+                }
+            }
+
+        }catch (IOException | ClassNotFoundException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void save() {
+        try {
+            FileOutputStream f = new FileOutputStream(filename);
+            ObjectOutputStream o = new ObjectOutputStream(f);
+
+            for (Passenger p: passengerList){
+                o.writeObject(p);
+            }
+
+            o.close();
+            f.close();
+
+        }catch (FileNotFoundException e){
+            System.out.println("File Not Found");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 
 

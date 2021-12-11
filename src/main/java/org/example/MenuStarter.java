@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.SortedMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,14 +21,19 @@ public class MenuStarter {
     }
 
     public void start() {
+
+        String passengerFile = "passengers.ser";
+        String vehicleFile = "vehicles.ser";
+        String bookingsFile = "bookings.ser";
+
+
         // create PassengerStore and load all passenger records from text file
-        passengerStore = new PassengerStore("passengers.OUT");
+        passengerStore = new PassengerStore(passengerFile);
 
         // create VehicleManager, and load all vehicles from text file
         vehicleManager = new VehicleManager("vehicles.OUT");
 
-        //BookingManager bookingManager = new BookingManager("booking.txt");
-        bookingManager = new BookingManager("bookings.out");
+        bookingManager = new BookingManager("bookings.out", passengerStore, vehicleManager);
 
 
         try {
@@ -137,7 +141,7 @@ public class MenuStarter {
                 switch (option) {
                     case SHOW_ALL:
                         System.out.println("Display ALL Passengers");
-                        passengerStore.displayAllPassengers();
+                        passengerStore.displayAllForm();
                         promptEnterKey();
                         break;
                     case FIND_BY_NAME:
@@ -148,14 +152,12 @@ public class MenuStarter {
                         if (p == null)
                             System.out.println("No passenger matching the name \"" + name + "\"");
                         else
-                            System.out.println("Found passenger: \n" + p.toString());
+                            System.out.println("Found passenger: \n" + p);
 
                         promptEnterKey();
                         break;
 
                     case ADD_PASSENGER:
-
-
                         boolean result;
                         do {
                             result = addPassenger();
@@ -240,7 +242,7 @@ public class MenuStarter {
                         if (v == null)
                             System.out.println("No vehicle matching the registration \"" + reg + "\"");
                         else
-                            System.out.println("Found vehicle: \n" + v.toString());
+                            System.out.println("Found vehicle: \n" + v);
                         promptEnterKey();
                         break;
 
@@ -249,13 +251,21 @@ public class MenuStarter {
                         typeSelection();
                         break;
 
-//                    case SHOW_BY_SEATS:
-//
-//                        ArrayList<Car> typeList = vehicleManager.filterSeats();
-//                        for (Vehicle b : typeList) {
-//                            System.out.println(b.toString());
-//                        }
-//                        break;
+                    case SHOW_BY_SEATS:
+
+                        ArrayList<Car> carList = vehicleManager.findVechicleByType("car");
+                        carList.addAll(vehicleManager.findVechicleByType("4x4"));
+                        System.out.print("Enter Number of seats: ");
+                        int seats=keyboard.nextInt();
+                        keyboard.nextLine();
+
+                        ArrayList<Car> filteredArray= vehicleManager.filterSeats(carList,seats);
+
+                        for (Car c : filteredArray) {
+                            System.out.println(c.toString());
+                        }
+                        promptEnterKey();
+                        break;
 
 
                     case EXIT:
@@ -277,14 +287,16 @@ public class MenuStarter {
     private void displayBookingMenu() {
         {
             final String MENU_ITEMS = "\n*** BOOKING MENU ***\n"
-                    + "1.Bookings\n"
+                    + "1.Display Bookings\n"
                     + "2.Make a booking\n"
-                    + "3.Exit\n"
-                    + "Enter Option [1,2,3]";
+                    + "3.Delete a booking\n"
+                    + "4.Exit\n"
+                    + "Enter Option [1,2,3,4]";
 
             final int SHOW_ALL = 1;
             final int MAKE_BOOKING = 2;
-            final int EXIT = 3;
+            final int DELETE_BOOKING = 3;
+            final int EXIT = 4;
 
             Scanner keyboard = new Scanner(System.in);
             int option = 0;
@@ -307,6 +319,23 @@ public class MenuStarter {
 
                             promptEnterKey();
                             break;
+                        case DELETE_BOOKING:
+                            System.out.println("Delete Booking by ID");
+
+                            System.out.println("Enter Booking id:");
+                            int id = keyboard.nextInt();
+                            keyboard.nextLine();
+
+                            Booking booking = bookingManager.findBookingById(id);
+                            if (booking == null) {
+                                System.out.println("Booking not found");
+                                promptEnterKey();
+                                break;
+                            }
+                            bookingManager.removeBooking(booking);
+
+                            promptEnterKey();
+                            break;
 
                         case EXIT:
                             System.out.println("Exit Menu option chosen");
@@ -324,106 +353,98 @@ public class MenuStarter {
         }
     }
 
-    private void bookingViews(){
+    private void bookingViews() {
         {
             final String MENU_ITEMS = "\n*** BOOKING Views ***\n"
                     + "1.Display all\n"
                     + "2.Display by Passenger ID\n"
                     + "3.Display by Passenger name\n"
                     + "4.Display by Booking ID\n"
+                    + "5.Display all future bookings\n"
                     + "Enter Option [1,2,3,4,5]";
 
             final int SHOW_ALL = 1;
             final int SHOW_PID = 2;
             final int SHOW_PNAME = 3;
-            final int SHOW_BID =4;
+            final int SHOW_BID = 4;
+            final int SHOW_FUTURE = 5;
 
 
             Scanner keyboard = new Scanner(System.in);
             int option = 0;
 
-                System.out.println("\n" + MENU_ITEMS);
-                try {
-                    String usersInput = keyboard.nextLine();
-                    option = Integer.parseInt(usersInput);
+            System.out.println("\n" + MENU_ITEMS);
+            try {
+                String usersInput = keyboard.nextLine();
+                option = Integer.parseInt(usersInput);
 
-                    switch (option) {
-                        case SHOW_ALL:
-                            bookingManager.displayAllBookings();
-                            break;
-                        case SHOW_BID:
+                switch (option) {
+                    case SHOW_ALL:
+                        bookingManager.displayAllForm();
+                        promptEnterKey();
+                        break;
+                    case SHOW_BID:
 
-                            System.out.print("Enter Booking ID: ");
-                            int bookingID =keyboard.nextInt();
-                            if(bookingManager.findBookingById(bookingID)!=null){
-                                System.out.println(bookingManager.findBookingById(bookingID));
-                                promptEnterKey();
-                            }else{
-                                System.out.println("Booking not found");
-                            }
-                            break;
-                        case SHOW_PID:
+                        System.out.print("Enter Booking ID: ");
+                        int bookingID = keyboard.nextInt();
+                        Booking booking = bookingManager.findBookingById(bookingID);
 
+                        if (booking == null) {
+                            System.out.println("Booking not found");
+                        } else {
+                            bookingManager.displayForm(booking);
 
-                            System.out.print("Enter Passenger ID: ");
-                            int passengerID =keyboard.nextInt();
-                            keyboard.nextLine();
-                            ArrayList<Booking> bookingList = bookingManager.findBookingByPassengerID(passengerID);
-
-                            if(!bookingList.isEmpty()){
+                        }
+                        promptEnterKey();
+                        break;
+                    case SHOW_PID:
 
 
-                                for (Booking b: bookingList){
-                                    System.out.println(b.toString());
-                                }
-                                promptEnterKey();
-                            }else{
-                                System.out.println("Booking not found");
-                                promptEnterKey();
+                        System.out.print("Enter Passenger ID: ");
+                        int passengerID = keyboard.nextInt();
+                        keyboard.nextLine();
+                        ArrayList<Booking> bookingList = bookingManager.findBookingByPassengerID(passengerID);
+
+                        if (!bookingList.isEmpty()) {
+
+                            for (Booking b : bookingList) {
+                                bookingManager.displayForm(b);
                             }
 
-                            break;
-                        case SHOW_PNAME:
-                            System.out.print("Enter Passenger name:");
-                            String name = keyboard.nextLine();
+                        } else {
+                            System.out.println("Booking not found");
 
+                        }
+                        promptEnterKey();
 
-                           if (passengerStore.findPassengerByName(name)==null){
-                               System.out.println("Passenger not found");
-                               promptEnterKey();
-                               break;
-                           }else{
-                               Passenger passenger=passengerStore.findPassengerByName(name);
-                               int id = passenger.getId();
-                               ArrayList<Booking> bookingListName = bookingManager.findBookingByPassengerID(id);
+                        break;
+                    case SHOW_PNAME:
+                        System.out.print("Enter Passenger name:");
+                        String name = keyboard.nextLine();
 
-                               if(bookingListName.isEmpty()){
-                                   System.out.println("Passenger currently has no bookings");
+                       bookingManager.showBookingByPassengerName(name);
+                        promptEnterKey();
+                        break;
 
-                               }else {
-                                   for (Booking b : bookingListName) {
-                                       System.out.println(b.toString());
-                                   }
-                               }
-                               promptEnterKey();
-
-                           }
-                            break;
-                        default:
-                            System.out.print("Invalid option - please enter number in range");
-                            break;
-                    }
-
-                } catch (InputMismatchException | NumberFormatException | NullPointerException e) {
-                    //System.out.print("Invalid option - please enter number in range");
+                    case SHOW_FUTURE:
+                        bookingManager.displayFutureBookings();
+                        promptEnterKey();
+                        break;
+                    default:
+                        System.out.print("Invalid option - please enter number in range");
+                        break;
                 }
+
+            } catch (InputMismatchException | NumberFormatException | NullPointerException e) {
+                System.out.print("Invalid option - please enter number in range");
+            }
 
 
         }
 
     }
-    public void typeSelection() {
 
+    public void typeSelection() {
 
 
         System.out.println("\nFind Vehicle by Type");
@@ -444,26 +465,26 @@ public class MenuStarter {
 
         switch (option) {
             case VAN:
-                ArrayList<Vehicle> typeListVan = vehicleManager.findVechicleByType("Van");
+                ArrayList<Van> typeListVan = vehicleManager.findVechicleByType("Van");
                 for (Vehicle b : typeListVan) {
                     System.out.println(b.toString());
                 }
                 break;
             case TRUCK:
-                ArrayList<Vehicle> typeListTruck = vehicleManager.findVechicleByType("Truck");
+                ArrayList<Van> typeListTruck = vehicleManager.findVechicleByType("Truck");
                 for (Vehicle b : typeListTruck) {
                     System.out.println(b.toString());
                 }
                 break;
             case CAR:
-                ArrayList<Vehicle> typeListCar = vehicleManager.findVechicleByType("Car");
-                for (Vehicle v : typeListCar){
+                ArrayList<Car> typeListCar = vehicleManager.findVechicleByType("Car");
+                for (Car v : typeListCar) {
                     System.out.println(v.toString());
                 }
                 break;
             case FOURX:
-                ArrayList<Vehicle> typeListFour = vehicleManager.findVechicleByType("4X4");
-                for (Vehicle v : typeListFour){
+                ArrayList<Car> typeListFour = vehicleManager.findVechicleByType("4X4");
+                for (Car v : typeListFour) {
                     System.out.println(v.toString());
                 }
                 break;
@@ -523,7 +544,7 @@ public class MenuStarter {
             passengerStore.addPassenger(pName, pEmail, pPhone, pLatitude, pLongitude);
             keyboard.nextLine();
         } catch (InputMismatchException | NumberFormatException err) {
-            System.out.println("Wrong input please try again   " + err.toString());
+            System.out.println("Wrong input please try again   " + err);
             return false;
         }
         return true;
@@ -536,10 +557,10 @@ public class MenuStarter {
 
             Passenger passenger = null;
 
-            while (true){
+            while (true) {
                 System.out.print("Enter Passenger Name:");
                 String pName = keyboard.nextLine();
-                if (passengerStore.findPassengerByName(pName) != null){
+                if (passengerStore.findPassengerByName(pName) != null) {
                     passenger = passengerStore.findPassengerByName(pName);
                     System.out.println("Passenger found");
                     break;
@@ -666,9 +687,8 @@ public class MenuStarter {
             }
 
 
-                date += Integer.toString(hour);
-                date += ":";
-
+            date += Integer.toString(hour);
+            date += ":";
 
 
             while (true) {
@@ -681,7 +701,7 @@ public class MenuStarter {
             }
 
 
-                date += Integer.toString(minute);
+            date += Integer.toString(minute);
 
             System.out.println(date);
 
@@ -691,12 +711,10 @@ public class MenuStarter {
             LocalDateTime dateTime = LocalDateTime.parse(date, dTF);
 
 
-
-
-            if (bookingManager.checkAvailability(vID,dateTime)){
+            if (bookingManager.checkAvailability(vID, dateTime)) {
                 System.out.println("Sorry the vehicle you have chosen is already book for the date and time specified.");
 
-            }else {
+            } else {
                 System.out.println("Enter Start latitude");
                 double startLatitude = keyboard.nextDouble();
                 System.out.println("enter start longitude");
@@ -719,10 +737,9 @@ public class MenuStarter {
             }
 
 
-
         } catch (InputMismatchException | NumberFormatException err) {
 
-            System.out.println("Wrong input please try again   " + err.toString());
+            System.out.println("Wrong input please try again   " + err);
 
         }
         return true;
@@ -735,6 +752,8 @@ public class MenuStarter {
     }
 
     public void close() {
+
+        System.out.println("Saving.....");
         vehicleManager.save();
         passengerStore.save();
         bookingManager.save();

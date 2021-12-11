@@ -2,11 +2,12 @@ package org.example;
 
 import java.time.LocalDate;
 
+
 public abstract class Vehicle
 {
-    private IdGenerator idGenerator = IdGenerator.getInstance("next-id-store.txt");  // get access to the id Generator
+    private final IdGenerator idGenerator = IdGenerator.getInstance("next-id-store.txt");  // get access to the id Generator
 
-    private int id;
+    private final int id;
     private String type;    // type of vehicle "Truck","Van","4x4", "Car" ...
     private String make;
     private String model;
@@ -15,7 +16,7 @@ public abstract class Vehicle
     private double costPerMile;
     private LocalDate lastServicedDate;
     private int mileage; // mileage recorded at last service
-    private LocationGPS depotGPSLocation;
+    private final LocationGPS depotGPSLocation;
 
     // Constructor called when a new Vehicle is being created.
     // No vehicle id is passed in as an argument,
@@ -62,7 +63,7 @@ public abstract class Vehicle
     public int getId() {
         return id;
     }
-    private void setId() {}; // prevents the id from being set (as it should only come from autogenerator)
+    private void setId() {} // prevents the id from being set (as it should only come from autogenerator)
 
     public String getMake()
     {
