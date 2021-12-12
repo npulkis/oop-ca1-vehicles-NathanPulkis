@@ -4,6 +4,7 @@ package org.example;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class PassengerStore {
@@ -32,6 +33,51 @@ public class PassengerStore {
             System.out.print(p.getId()+",");
         }
     }
+
+    public boolean checkPassengerName(String name,int pID){
+
+        for (Passenger p : passengerList){
+
+            if (p.getName().toLowerCase().contains(name.toLowerCase()) && p.getId() != pID){
+                return false;
+            }
+        }
+    return true;}
+
+
+    public boolean checkPassengerEmail(String email,int pID){
+
+        for (Passenger p : passengerList){
+
+            if (p.getEmail().equalsIgnoreCase(email) && p.getId() != pID){
+                return false;
+            }
+        }
+        return true;}
+
+    public boolean checkPassengerPhone(String phone,int pID){
+
+        for (Passenger p : passengerList){
+
+            if (p.getPhone().equalsIgnoreCase(phone) && p.getId() != pID){
+                return false;
+            }
+        }
+        return true;}
+
+    public boolean checkPassengerLocation(double latitude,double longitude,int pID){
+
+        for (Passenger p : passengerList){
+
+            if (p.getLocation().getLatitude()==latitude && p.getLocation().getLongitude()==longitude && p.getId() != pID ){
+                return false;
+            }
+        }
+
+    return true;}
+
+
+
 
     /**
      * Read Passenger records from a text file and create and add Passenger
@@ -192,7 +238,6 @@ return null;}
             for (Passenger p: passengerList){
                 o.writeObject(p);
             }
-
             o.close();
             f.close();
 

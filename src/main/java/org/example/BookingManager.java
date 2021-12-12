@@ -360,25 +360,25 @@ public class BookingManager
         return -1;
     }
 
-//    public double averageJourney(){
-//
-//
-//        int count = 0;
-//        double total=0;
-//        double distance=0;
-//        double cost=0;
-//
-//        for (Booking b :bookingList){
-//
-//            distance = Distance(b.getStartLocation(),b.getEndLocation());
-//            cost = b.getCost();
-//
-//            total += distance * cost;
-//            count += 1;
-//            System.out.println(distance);
-//        }
-//        System.out.println(distance);
-//  return (total / count); }
+    public double averageJourney(){
+
+
+        int count = 0;
+        double distance=0;
+        for (Booking b :bookingList){
+
+            Vehicle vehicle = vehicleManager.findVechicleById(b.getVehicleId());
+
+
+
+            distance+= Distance(vehicle.getDepotGPSLocation(),b.getStartLocation());
+            distance+= Distance(b.getStartLocation(),b.getEndLocation());
+            distance+= Distance(b.getEndLocation(),vehicle.getDepotGPSLocation());
+
+            count += 1;
+
+        }
+  return (distance / count); }
 
 
 
