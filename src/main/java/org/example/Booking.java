@@ -1,8 +1,9 @@
 package org.example;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 //
-class Booking
+class Booking implements Serializable
 {
     private final IdGenerator idGenerator = IdGenerator.getInstance("next-id-store.txt");  // get access to the id Generator
 

@@ -1,10 +1,11 @@
 package org.example;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 
-public abstract class Vehicle
+public abstract class Vehicle implements Serializable
 {
     private final IdGenerator idGenerator = IdGenerator.getInstance("next-id-store.txt");  // get access to the id Generator
 

@@ -4,8 +4,6 @@ package org.example;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
 
 public class PassengerStore {
 
@@ -83,31 +81,7 @@ public class PassengerStore {
      * Read Passenger records from a text file and create and add Passenger
      * objects to the PassengerStore.
      */
-//    private void loadPassengerDataFromFile(String filename) {
-//
-//        try {
-//            Scanner sc = new Scanner(new File(filename));
-////           Delimiter: set the delimiter to be a comma character ","
-////                    or a carriage-return '\r', or a newline '\n'
-//            sc.useDelimiter("[,\r\n]+");
-//
-//            while (sc.hasNext()) {
-//                int id = sc.nextInt();
-//                String name = sc.next();
-//                String email = sc.next();
-//                String phone = sc.next();
-//                double latitude = sc.nextDouble();
-//                double longitude = sc.nextDouble();
-//
-//                // construct a Passenger object and add it to the passenger list
-//                passengerList.add(new Passenger(id, name, email, phone, latitude, longitude));
-//            }
-//            sc.close();
-//
-//        } catch (IOException e) {
-//            System.out.println("Exception thrown. " + e);
-//        }
-//    }
+
 
     // TODO - see functional spec for details of code to add
 
@@ -202,6 +176,17 @@ return null;}
 //            }
 //        }
 //    }
+
+
+    public boolean checkPassengerID(int pID){
+
+        for (Passenger p : passengerList){
+
+            if (p.getId() == pID){
+                return true;
+            }
+        }
+    return false;}
 
     public void loadPassengerDataFromFile(String fileName){
 

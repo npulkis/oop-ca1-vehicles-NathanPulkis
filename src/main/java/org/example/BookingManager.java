@@ -1,14 +1,11 @@
 package org.example;
 
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 //
@@ -21,40 +18,13 @@ public class BookingManager
     // Constructor
     public BookingManager(String filename,PassengerStore pS,VehicleManager vM) {
         this.bookingList = new ArrayList<>();
-        loadBookingdataFromFile(filename);
+        //loadBookingdataFromFile(filename);
+        loadBookingDataFromFile(filename);
         passengerStore = pS;
         vehicleManager = vM;
     }
 
     //TODO implement functionality as per specification
-
-    // add a booking, find booking
-    /*public boolean addBooking(int bookingId, int passengerId, int vehicleId, double LatitStart, double LatitEnd,
-                              double LongitStart, double LongitEnd, double cost, int year, int month,
-                              int day, int hour, int minute, int second)
-    {
-        LocationGPS startLocation = new LocationGPS(LatitStart, LongitStart);
-        LocationGPS endLocation = new LocationGPS(LatitEnd, LongitEnd);
-        LocalDateTime bookingDateTime = LocalDateTime.of(year, month, day, hour, minute, second);
-
-
-        Booking booking = new Booking(bookingId, passengerId, vehicleId, bookingDateTime, startLocation, endLocation, cost);
-
-        boolean found = false;
-        // loop through here and check that email and password of passengers dont match
-        for(Booking b: bookingList)
-        {
-            if(booking.equals(b))
-            {
-                found = true;
-                return found;
-            }
-        }
-        bookingList.add(booking);
-        return found;
-    }*/
-
-
 
     public void addBooking(int pID, int vID,LocalDateTime dateTime, LocationGPS startLocation,LocationGPS endLocation,double cost)
     {
@@ -255,45 +225,6 @@ public class BookingManager
 
 
 
-    public void save() {
-        File file = new File("bookings.OUT");
-        FileWriter fWriter = null;
-        try {
-            fWriter = new FileWriter(file);
-
-            for (Booking b : bookingList) {
-                int bookingID = b.getBookingId();
-                int passengerID = b.getPassengerId();
-                int vehicleID = b.getVehicleId();
-                int year = b.getBookingDateTime().getYear();
-                int month = b.getBookingDateTime().getMonthValue();
-                int day = b.getBookingDateTime().getDayOfMonth();
-                int hour = b.getBookingDateTime().getHour();
-                int minute = b.getBookingDateTime().getMinute();
-                double startLatitude = b.getStartLocation().getLatitude();
-                double startLongitude = b.getStartLocation().getLongitude();
-                double endLatitude=b.getEndLocation().getLatitude();
-                double endLongitde=b.getEndLocation().getLongitude();
-                double cost= b.getCost();
-
-
-                String info = bookingID+","+passengerID+","+vehicleID+","+year+","+month+","+day+","+hour+","+minute+
-                        ","+startLatitude+","+startLongitude+","+endLatitude+","+endLongitde+","+cost;
-                fWriter.write(info+"\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally{
-            //close resources
-            try {
-                assert fWriter != null;
-                fWriter.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public boolean checkAvailability(int vehicleID, LocalDateTime bookingTime){
 
         ArrayList<Booking> list = findBookingByVehicleID(vehicleID);
@@ -367,7 +298,7 @@ public class BookingManager
         double distance=0;
         for (Booking b :bookingList){
 
-            Vehicle vehicle = vehicleManager.findVechicleById(b.getVehicleId());
+            Vehicle vehicle = vehicleManager.findVehicleById(b.getVehicleId());
 
 
 
@@ -378,8 +309,77 @@ public class BookingManager
             count += 1;
 
         }
+
+
+
+
+
   return (distance / count); }
 
+
+
+
+    public boolean checkBookingTime(int bID, int pID){
+
+        Booking booking = findBookingById(bID);
+        LocalDateTime date = booking.getBookingDateTime();
+
+        for (Booking b : bookingList){
+            if (b.getPassengerId()==pID && b.getBookingId() != bID){
+
+               if (b.getBookingDateTime().equals(date)){
+                   return false;
+               }
+
+            }
+        }
+    return true;}
+
+    public void loadBookingDataFromFile(String filename){
+
+        try{
+            FileInputStream fin = new FileInputStream(filename);
+            ObjectInputStream ois = new ObjectInputStream(fin);
+
+            Object o;
+
+            while (true){
+                try {
+                    o = ois.readObject();
+
+                    if (o instanceof Booking){
+                        bookingList.add((Booking) o);
+                    }else {
+                        System.err.println("Unexpected object in file");
+                    }
+                }catch (IOException ex){
+                    break;
+                }
+            }
+
+        }catch (IOException | ClassNotFoundException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void save() {
+        try {
+            FileOutputStream f = new FileOutputStream("bookings.ser");
+            ObjectOutputStream o = new ObjectOutputStream(f);
+
+            for (Booking b:bookingList){
+                o.writeObject(b);
+            }
+            o.close();
+            f.close();
+
+        }catch (FileNotFoundException e){
+            System.out.println("File Not Found");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
 
 
 

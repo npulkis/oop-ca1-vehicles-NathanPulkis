@@ -9,32 +9,37 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MenuStarter {
+public class Menu {
     // Components (objects) used in this App
     PassengerStore passengerStore;  // encapsulates access to list of Passengers
     VehicleManager vehicleManager;  // encapsulates access to list of Vehicles
-    BookingManager bookingManager;  // deals with all bookings
+    BookingManager bookingManager;// deals with all bookings
+    EmailStore emailStore;
+    //EmailStore emailStore;
 
     public static void main(String[] args) {
-        MenuStarter app = new MenuStarter();
+        Menu app = new Menu();
         app.start();
     }
 
     public void start() {
 
 
-        String passengerFile = "passengers.ser";
-        String vehicleFile = "vehicles.ser";
-        String bookingsFile = "bookings.ser";
+        final String passengerFile = "passengers.ser";
+        final String vehicleFile = "vehicles.ser";
+        final String bookingsFile = "bookings.ser";
+        final String emailFile = "emails.ser";
 
 
         // create PassengerStore and load all passenger records from text file
         passengerStore = new PassengerStore(passengerFile);
 
         // create VehicleManager, and load all vehicles from text file
-        vehicleManager = new VehicleManager("vehicles.OUT");
+        vehicleManager = new VehicleManager(vehicleFile);
 
-        bookingManager = new BookingManager("bookings.out", passengerStore, vehicleManager);
+        bookingManager = new BookingManager(bookingsFile, passengerStore, vehicleManager);
+
+         emailStore = new EmailStore(emailFile);
 
 
         try {
@@ -51,13 +56,15 @@ public class MenuStarter {
                 + "1. Passengers\n"
                 + "2. Vehicles\n"
                 + "3. Bookings\n"
-                + "4. Exit\n"
-                + "Enter Option [1,2,3,4]";
+                + "4. Emails\n"
+                + "5. Exit\n"
+                + "Enter Option [1,2,3,4,5]";
 
         final int PASSENGERS = 1;
         final int VEHICLES = 2;
         final int BOOKINGS = 3;
-        final int EXIT = 4;
+        final int EMAILS=4;
+        final int EXIT = 5;
 
         Scanner keyboard = new Scanner(System.in);
         int option = 0;
@@ -78,6 +85,9 @@ public class MenuStarter {
                     case BOOKINGS:
                         System.out.println("Bookings option chosen");
                         displayBookingMenu();
+                        break;
+                    case EMAILS:
+                        emailStore.displayEmails();
                         break;
                     case EXIT:
                         System.out.println("Exit Menu option chosen");
@@ -236,8 +246,8 @@ public class MenuStarter {
 
                     case SHOW_BY_SEATS:
 
-                        ArrayList<Car> carList = vehicleManager.findVechicleByType("car");
-                        carList.addAll(vehicleManager.findVechicleByType("4x4"));
+                        ArrayList<Car> carList = vehicleManager.findVehicleByType("car");
+                        carList.addAll(vehicleManager.findVehicleByType("4x4"));
                         System.out.print("Enter Number of seats: ");
                         int seats = keyboard.nextInt();
                         keyboard.nextLine();
@@ -455,28 +465,28 @@ public class MenuStarter {
 
         switch (option) {
             case VAN:
-                ArrayList<Van> typeListVan = vehicleManager.findVechicleByType("Van");
+                ArrayList<Van> typeListVan = vehicleManager.findVehicleByType("Van");
                 for (Vehicle b : typeListVan) {
                     System.out.println(b.toString());
                 }
                 promptEnterKey();
                 break;
             case TRUCK:
-                ArrayList<Van> typeListTruck = vehicleManager.findVechicleByType("Truck");
+                ArrayList<Van> typeListTruck = vehicleManager.findVehicleByType("Truck");
                 for (Vehicle b : typeListTruck) {
                     System.out.println(b.toString());
                 }
                 promptEnterKey();
                 break;
             case CAR:
-                ArrayList<Car> typeListCar = vehicleManager.findVechicleByType("Car");
+                ArrayList<Car> typeListCar = vehicleManager.findVehicleByType("Car");
                 for (Car v : typeListCar) {
                     System.out.println(v.toString());
                 }
                 promptEnterKey();
                 break;
             case FOURX:
-                ArrayList<Car> typeListFour = vehicleManager.findVechicleByType("4X4");
+                ArrayList<Car> typeListFour = vehicleManager.findVehicleByType("4X4");
                 for (Car v : typeListFour) {
                     System.out.println(v.toString());
                 }
@@ -555,135 +565,16 @@ public class MenuStarter {
                 vID = keyboard.nextInt();
 
 
-                if (vehicleManager.findVechicleById(vID) != null) {
+                if (vehicleManager.findVehicleById(vID) != null) {
 
                     break;
                 }
 
                 System.out.println("Can't find vehicle with given ID");
             }
-            Vehicle vehicle = vehicleManager.findVechicleById(vID);
+            Vehicle vehicle = vehicleManager.findVehicleById(vID);
 
-            String date = "";
-            LocalDateTime now = LocalDateTime.now();
-            int year = 0, month = 0, day = 0, hour = 0, minute = 0;
-
-
-            while (true) {
-
-                System.out.print("enter booking year: ");
-                while (!keyboard.hasNextInt()) {
-                    String input = keyboard.next();
-
-                    System.out.print("Wrong input enter int value: ");
-                }
-
-                year = keyboard.nextInt();
-
-
-                if (year > 2020 && year < 2025) {break;
-                }
-                System.out.print("Please enter year between 2020-2025");
-
-            }
-
-
-            date += Integer.toString(year); date += "-";
-
-            while (true) {
-
-                System.out.print("enter booking month: ");
-                while (!keyboard.hasNextInt()) {
-                    String input = keyboard.next();
-
-                    System.out.print("Wrong input enter int value: ");
-                }
-
-                month = keyboard.nextInt();
-
-                if (month >= 1 && month <= 12) {
-                    break;
-                }
-                System.out.println("Please enter month between 1-12");
-
-            }
-
-
-            date += Integer.toString(month);
-            date += "-";
-
-            while (true) {
-
-                System.out.println("enter booking day: ");
-                while (!keyboard.hasNextInt()) {
-                    String input = keyboard.next();
-
-                    System.out.println("Wrong input enter int value: ");
-                }
-
-                day = keyboard.nextInt();
-
-                if (day >= 1 && day <= 31) {
-                    break;
-                }
-                System.out.println("Please enter day between 1-31");
-
-            }
-
-
-            date += Integer.toString(day);
-            date += " ";
-
-            while (true) {
-
-                System.out.print("enter booking hour: ");
-                while (!keyboard.hasNextInt()) {
-                    String input = keyboard.next();
-
-                    System.out.print("Wrong input enter int value: ");
-                }
-
-                hour = keyboard.nextInt();
-
-                if (hour >= 1 && hour <= 24) {
-                    break;
-                }
-                System.out.println("Please enter hour between 1-24");
-
-            }
-
-
-            date += Integer.toString(hour);
-            date += ":";
-
-
-            while (true) {
-
-                System.out.print("enter booking  minute: ");
-                while (!keyboard.hasNextInt()) {
-                    String input = keyboard.next();
-
-                    System.out.print("Wrong input enter int value: ");
-                }
-
-                minute = keyboard.nextInt();
-
-                if (minute >= 1 && minute <= 59) {
-                    break;
-                }
-                System.out.println("Please enter minute between 1-59");
-
-            }
-
-
-            date += Integer.toString(minute);
-
-            System.out.println(date);
-
-
-            DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-M-d H:m");
-            LocalDateTime dateTime = LocalDateTime.parse(date, dTF);
-
+           LocalDateTime dateTime = validateDate();
 
             if (bookingManager.checkAvailability(vID, dateTime)) {
                 System.out.println("Sorry the vehicle you have chosen is already book for the date and time specified.");
@@ -702,13 +593,17 @@ public class MenuStarter {
                 distance += bookingManager.Distance(startLocation, endLocation);
                 distance += bookingManager.Distance(endLocation, vehicle.getDepotGPSLocation());
 
-                Vehicle v = vehicleManager.findVechicleById(vID);
+                Vehicle v = vehicleManager.findVehicleById(vID);
                 String type = v.getType();
                 double cost = bookingManager.calculateCosts(type, distance);
 
 
                 bookingManager.addBooking(pID, vID, dateTime, startLocation, endLocation, cost);
                 keyboard.nextLine();
+
+
+                String to = passengerStore.findPassengerById(pID).getName();
+                emailStore.addEmail(to,dateTime);
             }
 
 
@@ -737,6 +632,7 @@ public class MenuStarter {
                     System.out.println("Wrong input enter int value: ");
                 }
                 bID = keyboard.nextInt();
+                keyboard.nextLine();
 
 
                 booking = bookingManager.findBookingById(bID);
@@ -746,8 +642,9 @@ public class MenuStarter {
                 System.out.println("Booking doesnt exist");
             }
 
-            System.out.println("Booking found..\n " + booking.toString());
+            System.out.println("Booking found..\n " + booking);
             promptEnterKey();
+
 
 
             final String MENU_ITEMS = "\n*** Edit Booking ***\n"
@@ -756,15 +653,17 @@ public class MenuStarter {
                     + "3. Edit Date\n"
                     + "4. Edit Start location\n"
                     + "5. Edit End location\n"
-                    + "6. Exit\n"
-                    + "Enter Option [1,2,3,4,5,6]";
+                    + "6. Edit cost\n"
+                    + "7. Exit\n"
+                    + "Enter Option [1,2,3,4,5,6,7]";
 
             final int EDIT_PID = 1;
             final int EDIT_VID = 2;
             final int EDIT_DATE = 3;
             final int EDIT_START = 4;
             final int EDIT_END = 5;
-            final int EXIT = 6;
+            final int EDIT_COST = 6;
+            final int EXIT = 7;
 
 
             int option = 0;
@@ -777,29 +676,138 @@ public class MenuStarter {
                 switch (option) {
                     case EDIT_PID:
 
+                        int pid;
 
-                        System.out.println("enter passenfer id:");
-                        int pid = keyboard.nextInt();
+                            while (true){
+                                System.out.print("Enter Passenger ID: ");
+                                while (!keyboard.hasNextDouble()) {
+                                    String input = keyboard.next();
+                                    System.out.print("Wrong input enter int value: ");
+                                }
+                                pid = keyboard.nextInt();
+                                break;
+                            }
+
+                        if (passengerStore.checkPassengerID(pid)){
+                            System.out.println("Passenger exists");
+                        }else {
+                            System.out.println("Passenger doesnt exist");
+                            promptEnterKey();
+                            break;}
+
+                        int oldPID= booking.getPassengerId();
 
                         booking.setPassengerId(pid);
 
+                        if (!bookingManager.checkBookingTime(bID,pid)){
+                            System.out.println("Can't change passenger ID, Passenger would have two booking at the same time");
+                            booking.setPassengerId(oldPID);
+                        }else {
+                            booking.setPassengerId(pid);
+                            System.out.println("Passenger ID changed");
+
+                        }
                         promptEnterKey();
                         break;
                     case EDIT_VID:
                         typeSelection();
 
                         int vID = 0;
-                        while (true) {
-                            System.out.println("Input Vehicle ID:");
-                            vID = keyboard.nextInt();
-                            if (vehicleManager.findVechicleById(vID) != null) {
+                        while (true){
+                            System.out.print("Enter Vehicle ID: ");
+                            while (!keyboard.hasNextDouble()) {
+                                String input = keyboard.next();
+                                System.out.print("Wrong input enter int value: ");
+                            }
+                           vID = keyboard.nextInt();
+                            break;
+                        }
+
+                            if (vehicleManager.findVehicleById(vID) != null) {
                                 break;
                             }
                             System.out.println("Can't find vehicle with given ID");
 
+
+
+                        if(bookingManager.checkAvailability(vID,booking.getBookingDateTime())){
+                            System.out.println("Can't change Vehicle ID as it booked at the time given");
+                        }else if (vehicleManager.findVehicleById(vID) == null){
+                            promptEnterKey();
+                            break;
+                        }else {
+                            System.out.print("Vehicle ID changed");
+                            booking.setVehicleId(vID);
                         }
-                        booking.setVehicleId(vID);
+                        promptEnterKey();
                         break;
+                    case EDIT_DATE:
+
+                        LocalDateTime dateTime = validateDate();
+
+                        if (bookingManager.checkAvailability(booking.getVehicleId(),dateTime)){
+                            System.out.println("Can't change Date as another booking has the same car booked at this time");
+                        }else {
+                            System.out.println("Booking date changed");
+                            booking.setBookingDateTime(dateTime);
+                        }
+                        promptEnterKey();
+
+                        break;
+
+
+                    case EDIT_START:
+
+                        int distance=0;
+                        Vehicle sVehicle = vehicleManager.findVehicleById(booking.getVehicleId());
+
+                        double startLatitude =validateDouble("latitude");
+                        double startLongitude=validateDouble("longitude");
+
+                        LocationGPS startLocation = new LocationGPS(startLatitude,startLongitude);
+
+                        booking.setStartLocation(startLocation);
+
+
+                        distance+= bookingManager.Distance(sVehicle.getDepotGPSLocation(),booking.getStartLocation());
+                        distance+= bookingManager.Distance(booking.getStartLocation(),booking.getEndLocation());
+                        distance+= bookingManager.Distance(booking.getEndLocation(),sVehicle.getDepotGPSLocation());
+
+                        booking.setCost(bookingManager.calculateCosts(sVehicle.getType(),distance));
+
+                        System.out.println("Booking start location updated");
+                        promptEnterKey();
+                        break;
+
+                    case EDIT_END:
+
+                        int distance1=0;
+                        Vehicle eVehicle = vehicleManager.findVehicleById(booking.getVehicleId());
+
+                        double endLatitude =validateDouble("latitude");
+                        double endLongitude=validateDouble("longitude");
+
+                        LocationGPS endLocation = new LocationGPS(endLatitude,endLongitude);
+
+                        booking.setEndLocation(endLocation);
+
+
+                        distance1+= bookingManager.Distance(eVehicle.getDepotGPSLocation(),booking.getStartLocation());
+                        distance1+= bookingManager.Distance(booking.getStartLocation(),booking.getEndLocation());
+                        distance1+= bookingManager.Distance(booking.getEndLocation(),eVehicle.getDepotGPSLocation());
+
+                        booking.setCost(bookingManager.calculateCosts(eVehicle.getType(),distance1));
+
+                        System.out.println("Booking end location updated");
+                        promptEnterKey();
+                        break;
+
+                    case EDIT_COST:
+
+                        double cost=validateDouble("cost");
+                        booking.setCost(cost);
+                        break;
+
                     case EXIT:
                         System.out.println("Exit Menu option chosen");
                         break;
@@ -929,7 +937,7 @@ public class MenuStarter {
 
                             System.out.print("Enter latitude: ");
                             while (!keyboard.hasNextDouble()) {
-                                String input = keyboard.next();
+                                keyboard.next();
 
                                 System.out.print("Wrong input enter double value: ");
                             }
@@ -1045,6 +1053,132 @@ public class MenuStarter {
 
     }
 
+    public LocalDateTime validateDate(){
+
+        Scanner keyboard = new Scanner(System.in);
+
+        String date = "";
+        int year = 0, month = 0, day = 0, hour = 0, minute=0;
+
+
+        while (true) {
+
+            System.out.print("enter booking year: ");
+            while (!keyboard.hasNextInt()) {
+                keyboard.next();
+
+                System.out.print("Wrong input enter int value: ");
+            }
+
+            year = keyboard.nextInt();
+
+
+            if (year > 2020 && year < 2025) {break;
+            }
+            System.out.print("Please enter year between 2020-2025");
+
+        }
+
+
+        date += Integer.toString(year); date += "-";
+
+        while (true) {
+
+            System.out.print("enter booking month: ");
+            while (!keyboard.hasNextInt()) {
+              keyboard.next();
+
+                System.out.print("Wrong input enter int value: ");
+            }
+
+            month = keyboard.nextInt();
+
+            if (month >= 1 && month <= 12) {
+                break;
+            }
+            System.out.println("Please enter month between 1-12");
+
+        }
+
+
+        date += Integer.toString(month);
+        date += "-";
+
+        while (true) {
+
+            System.out.println("enter booking day: ");
+            while (!keyboard.hasNextInt()) {
+                keyboard.next();
+
+                System.out.println("Wrong input enter int value: ");
+            }
+
+            day = keyboard.nextInt();
+
+            if (day >= 1 && day <= 31) {
+                break;
+            }
+            System.out.println("Please enter day between 1-31");
+
+        }
+
+
+        date += Integer.toString(day);
+        date += " ";
+
+        while (true) {
+
+            System.out.print("enter booking hour: ");
+            while (!keyboard.hasNextInt()) {
+               keyboard.next();
+
+                System.out.print("Wrong input enter int value: ");
+            }
+
+            hour = keyboard.nextInt();
+
+            if (hour >= 1 && hour <= 24) {
+                break;
+            }
+            System.out.println("Please enter hour between 1-24");
+
+        }
+
+
+        date += Integer.toString(hour);
+        date += ":";
+
+
+        while (true) {
+
+            System.out.print("enter booking  minute: ");
+            while (!keyboard.hasNextInt()) {
+               keyboard.next();
+
+                System.out.print("Wrong input enter int value: ");
+            }
+
+            minute = keyboard.nextInt();
+
+            if (minute >= 1 && minute <= 59) {
+                break;
+            }
+            System.out.println("Please enter minute between 1-59");
+
+        }
+
+
+        date += Integer.toString(minute);
+
+
+
+        DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-M-d H:m");
+       return LocalDateTime.parse(date, dTF);
+
+
+
+    }
+
     public double validateDouble(String coord){
 
         while (true) {
@@ -1053,7 +1187,7 @@ public class MenuStarter {
             while (true){
             System.out.print("Enter "+coord+" : ");
             while (!keyboard.hasNextDouble()) {
-                String input = keyboard.next();
+                keyboard.next();
                 System.out.print("Wrong input enter double value: ");
             }
             return keyboard.nextDouble();
@@ -1073,6 +1207,7 @@ public class MenuStarter {
         vehicleManager.save();
         passengerStore.save();
         bookingManager.save();
+        emailStore.save();
         System.out.println("Exiting Program.....");
     }
 }
