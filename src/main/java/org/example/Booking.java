@@ -2,9 +2,9 @@ package org.example;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 //
-class Booking implements Serializable
-{
+class Booking implements Serializable {
     private final IdGenerator idGenerator = IdGenerator.getInstance("next-id-store.txt");  // get access to the id Generator
 
 
@@ -19,8 +19,7 @@ class Booking implements Serializable
 
     //TODO - see specification
 
-    public Booking(int passengerId, int vehicleId, LocalDateTime bookingDateTime, LocationGPS startLocation, LocationGPS endLocation, double cost)
-    {
+    public Booking(int passengerId, int vehicleId, LocalDateTime bookingDateTime, LocationGPS startLocation, LocationGPS endLocation, double cost) {
         this.bookingId = idGenerator.getNextId();
         this.passengerId = passengerId;
         this.vehicleId = vehicleId;
@@ -32,10 +31,7 @@ class Booking implements Serializable
     }
 
 
-
-
-    public Booking(int bookingId, int passengerId, int vehicleId, LocalDateTime bookingDateTime, LocationGPS startLocation, LocationGPS endLocation, double cost)
-    {
+    public Booking(int bookingId, int passengerId, int vehicleId, LocalDateTime bookingDateTime, LocationGPS startLocation, LocationGPS endLocation, double cost) {
         this.bookingId = bookingId;
         this.passengerId = passengerId;
         this.vehicleId = vehicleId;

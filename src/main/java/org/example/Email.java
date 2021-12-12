@@ -11,13 +11,12 @@ public class Email implements Serializable {
     private LocalDateTime date;
 
 
+    public Email(String to, String subject, String text, LocalDateTime date) {
 
-    public Email(String to,String subject,String text,LocalDateTime date){
-
-        this.To=to;
-        this.Subject=subject;
-        this.Text=text;
-        this.date=date;
+        this.To = to;
+        this.Subject = subject;
+        this.Text = text;
+        this.date = date;
     }
 
 

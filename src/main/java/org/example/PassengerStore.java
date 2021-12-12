@@ -8,7 +8,7 @@ import java.util.List;
 public class PassengerStore {
 
     private final ArrayList<Passenger> passengerList;
-    private final String filename ="passengers.ser";
+    private final String filename = "passengers.ser";
 
     public PassengerStore(String fileName) {
         this.passengerList = new ArrayList<>();
@@ -25,56 +25,58 @@ public class PassengerStore {
         }
     }
 
-    public void displayAllPassengerIds(){
+    public void displayAllPassengerIds() {
         System.out.println("\nPassenger Ids");
-        for (Passenger p: this.passengerList){
-            System.out.print(p.getId()+",");
+        for (Passenger p : this.passengerList) {
+            System.out.print(p.getId() + ",");
         }
     }
 
-    public boolean checkPassengerName(String name,int pID){
+    public boolean checkPassengerName(String name, int pID) {
 
-        for (Passenger p : passengerList){
+        for (Passenger p : passengerList) {
 
-            if (p.getName().toLowerCase().contains(name.toLowerCase()) && p.getId() != pID){
+            if (p.getName().toLowerCase().contains(name.toLowerCase()) && p.getId() != pID) {
                 return false;
             }
         }
-    return true;}
+        return true;
+    }
 
 
-    public boolean checkPassengerEmail(String email,int pID){
+    public boolean checkPassengerEmail(String email, int pID) {
 
-        for (Passenger p : passengerList){
+        for (Passenger p : passengerList) {
 
-            if (p.getEmail().equalsIgnoreCase(email) && p.getId() != pID){
+            if (p.getEmail().equalsIgnoreCase(email) && p.getId() != pID) {
                 return false;
             }
         }
-        return true;}
+        return true;
+    }
 
-    public boolean checkPassengerPhone(String phone,int pID){
+    public boolean checkPassengerPhone(String phone, int pID) {
 
-        for (Passenger p : passengerList){
+        for (Passenger p : passengerList) {
 
-            if (p.getPhone().equalsIgnoreCase(phone) && p.getId() != pID){
+            if (p.getPhone().equalsIgnoreCase(phone) && p.getId() != pID) {
                 return false;
             }
         }
-        return true;}
+        return true;
+    }
 
-    public boolean checkPassengerLocation(double latitude,double longitude,int pID){
+    public boolean checkPassengerLocation(double latitude, double longitude, int pID) {
 
-        for (Passenger p : passengerList){
+        for (Passenger p : passengerList) {
 
-            if (p.getLocation().getLatitude()==latitude && p.getLocation().getLongitude()==longitude && p.getId() != pID ){
+            if (p.getLocation().getLatitude() == latitude && p.getLocation().getLongitude() == longitude && p.getId() != pID) {
                 return false;
             }
         }
 
-    return true;}
-
-
+        return true;
+    }
 
 
     /**
@@ -84,7 +86,6 @@ public class PassengerStore {
 
 
     // TODO - see functional spec for details of code to add
-
     public void addPassenger(String name, String email, String phone, double latitude, double longitude) {
 
         boolean found = false;
@@ -104,113 +105,86 @@ public class PassengerStore {
 
     public Passenger findPassengerByName(String name) {
 
-        for(Passenger p : passengerList){
+        for (Passenger p : passengerList) {
 
-            if( p.getName().toLowerCase().contains(name.toLowerCase())){
+            if (p.getName().toLowerCase().contains(name.toLowerCase())) {
                 return p;
             }
         }
 
-  return null;  }
+        return null;
+    }
 
-public Passenger findPassengerById(int id){
-        for (Passenger p : passengerList){
-            if (p.getId()==id){
+    public Passenger findPassengerById(int id) {
+        for (Passenger p : passengerList) {
+            if (p.getId() == id) {
                 return p;
             }
         }
-return null;}
+        return null;
+    }
 
-    public void removePassenger(Passenger p){
+    public void removePassenger(Passenger p) {
 
-        System.out.println("Passnger "+p.getId()+" removed");
+        System.out.println("Passnger " + p.getId() + " removed");
         passengerList.remove(p);
     }
 
 
-    public void displayAllForm(){
+    public void displayAllForm() {
         ArrayList<Passenger> passengers = passengerList;
         passengers.sort(new PassengerNameComparator());
-        for (Passenger p : passengers){
+        for (Passenger p : passengers) {
             displayForm(p);
         }
     }
 
-    public void displayForm(Passenger p){
+    public void displayForm(Passenger p) {
         System.out.println("---------------------------------");
-        System.out.println("Passenger ID: "+p.getId());
-        System.out.println("Passenger Name: "+p.getName());
-        System.out.println("Passenger Email: "+p.getEmail());
-        System.out.println("Passenger Phone: "+p.getPhone());
-        System.out.println("Location: "+p.getLocation());
+        System.out.println("Passenger ID: " + p.getId());
+        System.out.println("Passenger Name: " + p.getName());
+        System.out.println("Passenger Email: " + p.getEmail());
+        System.out.println("Passenger Phone: " + p.getPhone());
+        System.out.println("Location: " + p.getLocation());
         System.out.println("---------------------------------");
 
     }
 
-//    public void save() {
-//        File file = new File("passengers.OUT");
-//        FileWriter fWriter = null;
-//        try {
-//            fWriter = new FileWriter(file);
-//
-//            for (Passenger p : this.passengerList) {
-//                int id = p.getId();
-//                String name = p.getName();
-//                String email = p.getEmail();
-//                String phone = p.getPhone();
-//                double latitude = p.getLocation().getLatitude();  // Depot GPS location
-//                double longitude = p.getLocation().getLongitude();
-//
-//                String info = id+","+name+","+email+","+phone+","+latitude+","+longitude;
-//                fWriter.write(info+"\n");
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }finally{
-//            //close resources
-//            try {
-//                assert fWriter != null;
-//                fWriter.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
 
+    public boolean checkPassengerID(int pID) {
 
-    public boolean checkPassengerID(int pID){
+        for (Passenger p : passengerList) {
 
-        for (Passenger p : passengerList){
-
-            if (p.getId() == pID){
+            if (p.getId() == pID) {
                 return true;
             }
         }
-    return false;}
+        return false;
+    }
 
-    public void loadPassengerDataFromFile(String fileName){
+    public void loadPassengerDataFromFile(String fileName) {
 
-        try{
+        try {
             FileInputStream fin = new FileInputStream(fileName);
             ObjectInputStream ois = new ObjectInputStream(fin);
 
             Object o;
 
-            while (true){
+            while (true) {
                 try {
                     o = ois.readObject();
 
-                    if (o instanceof Passenger){
+                    if (o instanceof Passenger) {
                         passengerList.add((Passenger) o);
-                    }else {
+                    } else {
                         System.err.println("Unexpected object in file");
                     }
-                }catch (IOException ex){
+                } catch (IOException ex) {
                     break;
                 }
             }
 
-        }catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -220,15 +194,15 @@ return null;}
             FileOutputStream f = new FileOutputStream(filename);
             ObjectOutputStream o = new ObjectOutputStream(f);
 
-            for (Passenger p: passengerList){
+            for (Passenger p : passengerList) {
                 o.writeObject(p);
             }
             o.close();
             f.close();
 
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.out.println("File Not Found");
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

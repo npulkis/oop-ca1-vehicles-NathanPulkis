@@ -21,7 +21,7 @@ public class Passenger implements Serializable {
                      double latitude, double longitude) {
 
         // some minimal validation
-        if (name == null )
+        if (name == null)
             throw new IllegalArgumentException("null arguments encountered");
 
         this.id = idGenerator.getNextId();
@@ -30,7 +30,6 @@ public class Passenger implements Serializable {
         this.phone = phone;
         this.location = new LocationGPS(latitude, longitude);
     }
-
 
 
     // Version of constructor called when the passenger id is known,
@@ -54,7 +53,8 @@ public class Passenger implements Serializable {
         return id;
     }
 
-    private void setId() {} // prevents the id from being set (as it should only come from autogenerator)
+    private void setId() {
+    } // prevents the id from being set (as it should only come from autogenerator)
 
     public String getName() {
         return name;

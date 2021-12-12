@@ -2,23 +2,21 @@ package org.example;
 
 // Car class to represent Cars and Trucks
 //
-public class Car extends Vehicle
-{
+public class Car extends Vehicle {
     private int seats;   // measured in litres.  For Cars and Trucks
 
     public Car(String type, String make, String model, double milesPerKwH,
                String registration, double costPerMile,
                int year, int month, int day,
                int mileage, double latitude, double longitude,
-               int seats)
-    {
+               int seats) {
         // call superclass constructor to initialize the fields defined in Vehicle
-        super(type,make,model,milesPerKwH,
-                registration,costPerMile,
-                year,month,day,
-                mileage,latitude,longitude);
+        super(type, make, model, milesPerKwH,
+                registration, costPerMile,
+                year, month, day,
+                mileage, latitude, longitude);
 
-        this.seats=seats;
+        this.seats = seats;
     }
 
     // Constructor version to be used to recreate a Car that was read from file.
@@ -28,20 +26,20 @@ public class Car extends Vehicle
                String registration, double costPerMile,
                int year, int month, int day,
                int mileage, double latitude, double longitude,
-               int seats)
-    {
+               int seats) {
         // call superclass constructor to initialize the fields defined in Vehicle
-        super(id,type,make,model,milesPerKwH,
-                registration,costPerMile,
-                year,month,day,
-                mileage,latitude,longitude);
+        super(id, type, make, model, milesPerKwH,
+                registration, costPerMile,
+                year, month, day,
+                mileage, latitude, longitude);
 
-        this.seats=seats;
+        this.seats = seats;
     }
 
     public int getSeats() {
         return seats;
     }
+
     public void setSeats(int seats) {
         this.seats = seats;
     }
